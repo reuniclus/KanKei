@@ -16,15 +16,16 @@ export default function TabList() {
 
   return (
     <>
-      {console.log(useTabs().activeTab)}
       <ul>
         {tabs.map((tab, index) => (
-          <li key={index}>
+          <li key={index}
+          className={`${index === activeTab && "bg-white hover:bg-white text-black"} bg-slate-100 hover:bg-slate-50 text-gray-500 hover:text-gray-700 text-sm font-medium text-center border border-b-transparent inline-flex rounded-t-lg cursor-pointer`} 
+          >
             <label>
-              <button onClick={() => {
-                setActiveTab(index)
-              }}>
-                {tab.title} id {tab.id} index {index} active {activeTab}
+              <button onClick={() => {setActiveTab(index)}}
+              className="h-full pl-3 py-3"
+              >
+                {tab.title}
               </button>
               <button onClick={() => {
                 let curtab = activeTab
@@ -35,21 +36,23 @@ export default function TabList() {
                 let targetTab = curtab == index ? curtab-1 : curtab;
                 targetTab = targetTab < 0 ? targetTab+1 : targetTab;
                 setActiveTab(targetTab);
-              }}>
-                Delete
+              }}
+              className='h-full px-3 py-3" hover:text-red-500'>
+                🞫
               </button>
             </label>
           </li>
         ))}
       </ul>
 
-      {tabs.map((tab, index) => (
-        <div key={index}>
-          {index == activeTab ? <>
+      
+      <div className="shadow-xl border bg-white p-6 grow min-h-0 overflow-auto rounded-lg rounded-tl-none">
+      {tabs.map((tab, index) => ( 
+          index == activeTab ? <>
             {tab.text}
-          </> : <></>}
-        </div>
+          </> : <></>    
       ))}
+      </div>
     </>
   );
 }

@@ -1,9 +1,7 @@
 import * as React from "react";
 import { useEffect, useState, useContext } from "react"
-import  {useGlobalContext} from "./globalProvider";
 
 function Header() {
-    const {setSharedObject} = useGlobalContext();
     //const {value, setValue} = useContext(globalContext);
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -17,12 +15,12 @@ function Header() {
             <div>{title}</div>
         </a>;
 
+    
 
 //const setSharedValue = useContext(globalContext);
     
     const handleSubmit = (e) => {
         e.preventDefault();
-        setSharedObject({text:searchQuery});
         //console.log(searchQuery);
         //setGlobalstate({searchQuery:searchQuery});
         //onSubmit(searchQuery);

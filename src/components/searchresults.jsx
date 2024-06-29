@@ -1,7 +1,6 @@
 import { useEffect, useState, useContext } from "react"
-import { globalContext } from "./globalProvider.jsx";
 import { useTabs, useTabsDispatch } from './TabsContext.js';
-
+import getComponents from "./getcomponents.js";
 
 const apiurl = 'https://sheet.best/api/sheets/1000dcf2-2fe7-428c-9be3-2a50656c18c0/tabs/cjkvi-ids-analysis';
 
@@ -180,45 +179,88 @@ const fakeapi = [
     }
 ]
 
+
+
+function Search(query) {
+    console.log(query);
+    const terms = query.split(' ');
+    console.log(terms);
+
+
+    let finalquery = '/query?'
+    let components = []
+
+    terms.forEach(term => {
+        if (term.includes('#')) {
+            finalquery += `tags=*${term.replace('#', '')}*&`
+        }
+        else if (/[ぁ-ゖ]/.test(term)) {
+            finalquery += `kun=*${term}*&`
+        }
+        else if (/[ァ-ヺ]/.test(term)) {
+            finalquery += `on=*${term}*&`
+        }
+        else if (/[āáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]/.test(term)) {
+            finalquery += `pinyin=*${term}*&`
+        }
+        else if (/[1-6]/.test(term)) {
+            finalquery += `jyutping=*${term}*&`
+        }
+        else if (/[A-z]/.test(term)) {
+            finalquery += `meaning=*${term}*&`
+        }
+        else {
+            for (const symbol of term) {
+                components.push(`*${symbol}*`)
+            }
+        }
+    });
+
+
+
+    if (components.length > 0) finalquery += `components=${components.sort().join('')}&`
+    console.log(finalquery)
+    return finalquery;
+}
+
 function SearchResults(query) {
     let quer = query.query;
-
-    if(quer.charCodeAt(0) < 0x4e00){ // - 9faf
-        quer = randkanji[query.query.length % 15];
-    }
-    
+    console.log(quer)
+    console.log(Search(quer))
     const dispatch = useTabsDispatch().dispatch;
     const activeTab = useTabs().activeTab;
 
-    const [kanji, setKanji] = useState();
-    const variants = kanji ? kanji.variants ? kanji.variants.split(',') : [] : [];
+    const [kanjiobj, setKanjiobj] = useState();
+    const variants = kanjiobj ? kanjiobj.variants ? kanjiobj.variants.split(',') : [] : [];
     const [searchresults, setSearchResults] = useState([]);
-
-    //exact match
-    useEffect(() => {
-        if (query) {
-            fetch(`${apiurl}/kanji/${quer}`)
-                .then(response => response.json())
-                .then(data => {
-                    console.log(quer);
-                    console.log(data[0]);
-                    setKanji(data[0]);
-                })
-                .catch(error => {
-                    console.log(error)
-                })
-        }
-    }, [])
+    const [extraresults, setExtraResults] = useState([]);
 
     //component query
     useEffect(() => {
         if (quer) {
-            fetch(`${apiurl}/query?freq_jp=__lte(2600)&components=*${quer}*`)
+            fetch(`${apiurl}${Search(quer)}&freq_jp=__lte(2600)`)
                 .then(response => response.json())
                 .then(data => {
-                    console.log(quer);
                     console.log(data)
-                    setSearchResults(data);
+                    let kanji = data.find(obj => quer == obj.kanji)
+                    data = data.filter(obj => quer != obj.kanji)
+                    setKanjiobj(kanji)
+                    if (!kanji && quer.length == 1) {
+                        fetch(`${apiurl}/kanji/${quer}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                console.log(data[0]);
+                                setKanjiobj(data[0]);
+                            })
+                            .catch(error => {
+                                console.log(error)
+                            })
+                    }
+
+                    let firsthalf = data.filter(obj => obj.idc_naive.includes(quer) || obj.idc_analysis.includes(quer));
+                    let secondhalf = data.filter(obj => !(obj.idc_naive.includes(quer) || obj.idc_analysis.includes(quer)));
+                    setSearchResults(firsthalf.sort((a, b) => a.kanji.localeCompare(b.kanji)))
+                    setExtraResults(secondhalf.sort((a, b) => a.kanji.localeCompare(b.kanji)))
                 })
                 .catch(error => {
                     console.log(error)
@@ -226,31 +268,75 @@ function SearchResults(query) {
         }
     }, [])
 
+    let desc = `Characters with ${quer} anywhere`
+
+    if (quer.includes('#')) {
+        desc = `Characters tagged ${quer}`
+    }
+    else if (/[ぁ-ゖ]/.test(quer)) {
+        desc = `Characters with kun yomi ${quer}`
+    }
+    else if (/[ァ-ヺ]/.test(quer)) {
+        desc = `Characters with on yomi ${quer}`
+    }
+    else if (/[āáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]/.test(quer)) {
+        desc = `Characters with pinyin ${quer}`
+    }
+    else if (/[1-6]/.test(quer)) {
+        desc = `Characters with jyutping ${quer}`
+    }
+    else if (/[A-z]/.test(quer)) {
+        desc = `Characters with meaning ${quer}`
+    }
+    else if (quer.length>1) {
+        desc = `Characters with components ${quer}`
+    }
+    if (quer.includes(' ')) {
+        desc = `Characters matching ${quer}`
+    }
+
+
     if (!query) { return }
-    if (!kanji) { return (<>Kanji {quer} not found</>) }
     return (
         <>
             <div className="flex flex-col gap-3 items-start">
+                {kanjiobj ? <>
+                    <SearchResult charaobj={kanjiobj} />
 
-                <SearchResult charaobj={kanji} />
+                    {variants.length > 0 ? <>
+                        <SearchSubtitle text="Character variants" />
+                        <div className="rounded-lg w-[30rem]  self-center flex justify-around">
+                            {variants.map((e, index) => (
+                                <button onClick={() => {
+                                    dispatch({
+                                        type: 'consult',
+                                        title: e,
+                                        text: e,
+                                    });
+                                }} key={index}
+                                    className="text-4xl font-black font-serif p-4 rounded-lg flex gap-2 bg-slate-100 hover:bg-slate-200"
+                                >
+                                    {e}
+                                </button>
+                            ))}
+                        </div>
+                    </> : <></>}
+                </>
+                    :
+                    quer.length == 1 ? <>Kanji {quer} not found</> : <></>
+                }
 
-                {variants.length > 0 ? <>
-                    <SearchSubtitle text="Character variants" />
-                    {variants.map((e, index) => (
-                        <button onClick={() => {
-                            dispatch({
-                                type: 'consult',
-                                title: e,
-                                text: e,
-                            });
-                        }} key={index}>
-                            {e} {/*<SearchResult charaobj={kanji} />*/}
-                        </button>
-                    ))}</> : <></>}
+
 
                 {searchresults.length > 0 ? <>
-                    <SearchSubtitle text={`Characters with the component ${kanji.kanji}`} />
+                    <SearchSubtitle text={`Characters directly including ${quer}`} />
                     {searchresults.map((obj, index) => (
+                        <SearchResult charaobj={obj} key={index} />
+                    ))}</> : <></>}
+
+                {extraresults.length > 0 ? <>
+                    <SearchSubtitle text={desc} />
+                    {extraresults.map((obj, index) => (
                         <SearchResult charaobj={obj} key={index} />
                     ))}</> : <></>}
 
@@ -266,23 +352,14 @@ const SearchSubtitle = ({ text }) => <>
     </div>
 </>
 
-function getComponents(charaobj) {
-    let components = []
-    if (!charaobj) { return components }
-    console.log(charaobj)
-    if (charaobj.tags.includes("形聲")) {
-        components = [{ compchar: charaobj.意, comprole: "Semantic" }, { compchar: charaobj.聲, comprole: "Phonetic" }];
-    }
-    else {
-        let idc = charaobj.idc_analysis == "" ? charaobj.idc_naive : charaobj.idc_analysis;
-        idc = idc.replace(new RegExp("[⿰-⿿]"), '');
 
-        for (let i = 0; i < idc.length; i++) {
-            components.push({ compchar: idc.charAt(i), comprole: "Semantic" });
-        }
-    }
-    return components;
+
+
+function shorten(string, more = false) {
+    if (more) return string.replace(new RegExp("[、;].+$", ''), '')
+    else return string.replace(new RegExp("([^、;]*[、;][^、;]*).*", 'g'), '$1')
 }
+
 
 const SearchResult = ({ charaobj }) => {
     if (!charaobj) { return }
@@ -290,34 +367,33 @@ const SearchResult = ({ charaobj }) => {
     let components = getComponents(charaobj)
 
     return (
-        <div className="flex gap-3 justify-between items-center bg-slate-50 p-2 hover:bg-slate-100">
-            <button className="flex gap-2 w-1/2 min-w-56"
+        <div className="mx-auto w-[32rem] flex gap-3 items-center bg-slate-50 hover:bg-slate-100 rounded-lg p-2 justify-stretch">
+            <button className="p-4 rounded-lg flex gap-2 hover:bg-slate-200 w-1/2"
                 onClick={() => {
                     dispatch({
                         type: 'consult',
                         title: charaobj.kanji,
                         text: charaobj.kanji,
                     });
-                }}
-            >
+                }}>
                 <div className="text-4xl font-black font-serif">{charaobj.kanji}</div>
-                <div className="flex flex-col text-sm shrink-0">
-                    <div>{charaobj.kun.replace(new RegExp("、.+$"), '')} {charaobj.on} {charaobj.pinyin}</div>
-                    <div>{charaobj.meaning.replace(new RegExp("([^;]*;[^;]*).*"), '$1')}</div>
+                <div className="flex flex-col text-sm shrink-0 grow">
+                    <div className="max-w-40 overflow-hidden text-ellipsis text-nowrap">{shorten(charaobj.kun, true)} {shorten(charaobj.on)} {charaobj.pinyin}</div>
+                    <div className="max-w-40 overflow-hidden text-ellipsis text-nowrap">{shorten(charaobj.meaning)}</div>
                 </div>
             </button>
 
-            <span className="flex gap-2 w-1/2">
+            <span className="flex w-1/2 gap-2 justify-center">
                 {components.map((obj, index) => (
-                    <button 
-                    onClick={() => {
-                        dispatch({
-                            type: 'search',
-                            title: obj.compchar,
-                            text: obj.compchar,
-                        });
-                    }}
-                    className={`flex flex-col ${color(obj.comprole)}`} key={index}>
+                    <button
+                        onClick={() => {
+                            dispatch({
+                                type: 'search',
+                                title: obj.compchar,
+                                text: obj.compchar,
+                            });
+                        }}
+                        className={`rounded-lg p-2 hover:bg-slate-200 flex flex-col ${color(obj.comprole)}`} key={index}>
                         <div className="text-sm select-none">{obj.comprole} </div>
                         <div className="self-center text-3xl font-black font-serif">{obj.compchar}</div>
                     </button>

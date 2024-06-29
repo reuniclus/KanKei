@@ -2,11 +2,9 @@ import { useEffect, useState, useContext } from "react"
 
 import DictEntry from './dictentry';
 import SearchResults from './searchresults';
-import { globalContext } from "./globalProvider";
 
 export default function Tabber(query) {
 
-    const sharedObject = useContext(globalContext).sharedObject;
 
     const [activeTab, setActiveTab] = useState(0);
     const [tabContentArray, setTabContentArray] = useState([

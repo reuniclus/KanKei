@@ -1,9 +1,18 @@
 import { useEffect, useState } from "react"
+import { useTabs, useTabsDispatch } from './TabsContext.js';
+import getComponents from "./getcomponents.js";
+
 //import axios from "axios";
 const apiurl = 'https://sheet.best/api/sheets/1000dcf2-2fe7-428c-9be3-2a50656c18c0/tabs/cjkvi-ids-analysis';
-const wiktionaryapi = 'https://en.wiktionary.org/w/api.php?format=json&action=query&prop=extracts&explaintext&titles='
+const wiktionaryapi = // 'https://en.wiktionary.org/w/api.php?origin=*&format=json&action=query&prop=extracts&explaintext&titles='
+    'https://en.wiktionary.org/w/api.php?origin=*&action=parse&formatversion=2&prop=text&format=json&page='
 
-const Caption = ({ title, data }) => <div className="flex gap-3 justify"><div className="text-neutral-400 select-none basis-16">{title}</div><div className="min-w-20">{data}</div></div>;
+const Caption = ({ title, data }) => {
+    return (<div className="flex gap-3 justify">
+        <div className="text-neutral-400 select-none basis-16">{title}</div>
+        <div className="min-w-20">{data}</div>
+    </div>)
+}
 
 
 function color(role) {
@@ -18,57 +27,56 @@ function color(role) {
     return color
 }
 
-function getComponents(charaobj) {
-    let components = []
-    if (charaobj.tags.includes("形聲")) {
-        components = [{ compchar: charaobj.意, comprole: "Semantic" }, { compchar: charaobj.聲, comprole: "Phonetic" }];
+function hovercolor(role) {
+    var color = "";
+    switch (role) {
+        case 'Semantic': color = 'text-cyan-800'; break;
+        case 'Phonetic': color = 'text-red-800'; break;
+        case 'Root phonetic': color = 'text-red-950'; break;
+        case 'Empty': color = 'text-purple-700'; break;
+        case 'Form': color = 'text-orange-500'; break;
     }
-    else {
-        let idc = charaobj.idc_analysis == "" ? charaobj.idc_naive : charaobj.idc_analysis;
-        idc = idc.replace(new RegExp("[⿰-⿿]"), '');
+    return "hover:" + color
+}
 
-        for (let i = 0; i < idc.length; i++) {
-            components.push({ compchar: idc.charAt(i), comprole: "Semantic" });
-        }
-    }
-    return components
+
+const fallback = {
+    "codepoint": "U+67D0",
+    "kanji": "某",
+    "on": "ボウ",
+    "pinyin": "mǒu",
+    "jyutping": "mau5",
+    "kun": "それがし、なにがし",
+    "meaning": "so-and-so;a certain",
+    "tags": "會意, 常用",
+    "variants": "厶",
+    "JP shinjitai form": "",
+    "idc_analysis": "",
+    "idc_naive": "⿱甘木",
+    "意": "",
+    "聲": "",
+    "原聲": "",
+    "最原聲": "",
+    "root_phonetic_search": "",
+    "聲 pinyin": "",
+    "聲 on": "",
+    "聲 jyutping": "",
+    "components": "甘木曰",
+    "freq_jp": "1918",
+    "freq_zh": "517",
+    "inclusion_jomako": "16.00%",
+    "inclusion_all": "1.31%",
+    "high frequency words": "",
+    "mid frequency words": "某",
+    "low frequency words": null,
+    "extremely rare words": null,
+    "proper nouns": null
 }
 
 function DictEntry(kanji) {
 
-    //const [reloadFlag, setReloadFlag] = useState(false);
-    const [kanjiData, setKanjiData] = useState({
-        "codepoint": "U+8584",
-        "kanji": "薄",
-        "on": "ハク",
-        "pinyin": "báo bó",
-        "jyutping": "bok6 bok2",
-        "kun": "うす.い、うす、うす.める、うす.まる、うす.らぐ、うす.ら、うす.れる、すすき、せま.る",
-        "meaning": "dilute;thin",
-        "tags": "形聲, 常用",
-        "variants": "",
-        "JP shinjitai form": "",
-        "idc_analysis": "⿱艹溥",
-        "idc_naive": "⿱艹⿰氵⿱⿺𤰔丶寸",
-        "意": "艹",
-        "聲": "溥",
-        "原聲": "尃",
-        "最原聲": "甫",
-        "聲 pinyin": "pǔ",
-        "聲 on": "ホ、フ",
-        "聲 jyutping": "pou2",
-        "components": "艹氵𤰔丶寸溥十丨甫月尃",
-        "freq_jp": "874",
-        "freq_zh": "1431",
-        "inclusion_jomako": "49.50%",
-        "inclusion_all": "5.51%",
-        "high frequency words": "薄い，薄暗い，薄れる",
-        "mid frequency words": null,
-        "low frequency words": null,
-        "extremely rare words": null,
-        "proper nouns": null
-    })
-    //const [kanji, setKanji] = useState("翻");
+    const [kanjiData, setKanjiData] = useState()
+
     const [components, setComponents] = useState([]);
 
     useEffect(() => {
@@ -87,21 +95,20 @@ function DictEntry(kanji) {
 
     return (
         <>
-            <div className="flex flex-col xl:flex-row">
-                <KanjiInfo kanjiData={kanjiData} />
-                <div className="flex justify-center gap-4">
+            {kanjiData ?
+                <div className="flex flex-col xl:flex-row">
 
-                    {components.map((obj, index) => (
-                        <ComponentInfo character={obj.compchar} role={obj.comprole} key={index} />
-                    ))}
-
-                    {kanjiData.原聲 == (undefined || '') ? <>
-                        <ComponentInfo character={kanjiData.kanji} role="Root phonetic" />
-                    </> : <>
-                        <ComponentInfo character={kanjiData.原聲} role="Root phonetic" />
-                    </>}
+                    <KanjiInfo kanjiData={kanjiData} />
+                    <div className="flex justify-around gap-4">
+                        {components.map((obj, index) => (
+                            <ComponentInfo character={obj.compchar} role={obj.comprole} key={index} />
+                        ))}
+                        {kanjiData.原聲 ?
+                            <ComponentInfo character={kanjiData.原聲} role="Root phonetic" /> :
+                            <ComponentInfo character={kanjiData.kanji} role="Root phonetic" />}
+                    </div>
                 </div>
-            </div>
+                : <></>}
         </>
     )
 }
@@ -109,20 +116,37 @@ function DictEntry(kanji) {
 
 
 const KanjiInfo = ({ kanjiData }) => {
-    const [wiktionaryextract, setWiktionaryextract] = useState("Phono-semantic compound (形聲／形声, OC *pʰan) : phonetic 番 (OC *paːl, *paːls, *pʰaːn, *pʰan, *ban) + semantic 羽 (“wings”) – to flutter.");
+    const dispatch = useTabsDispatch().dispatch;
+    const variants = kanjiData ? kanjiData.variants ? kanjiData.variants.split(',') : [] : [];
+    const tags = kanjiData ? kanjiData.tags ? kanjiData.tags.split(', ') : [] : [];
 
-    /*
+    const [wiktionaryextract, setWiktionaryextract] = useState("");
+
     useEffect(() => {
         fetch(wiktionaryapi + kanjiData.kanji)
             .then(response => response.json())
             .then(data => {
                 console.log(data);
-                setWiktionaryextract(data.extract);
+                let etymsection = data.parse.text.split('<h3 id=\"Glyph_origin\">Glyph origin</h3>')[1].split('<span class="mw-editsection-bracket">]</span>')[1].split('<div class="mw-heading')[0]
+                if (!etymsection.includes('<p>')) etymsection = '';
+                else {
+                    etymsection = etymsection.replace(new RegExp("<table.+?</table>", 's'), '');
+                    etymsection = etymsection.replace(new RegExp(".+?(<p>)", 's'), '$1');
+                    //etymsection = etymsection.replace(new RegExp("<table.+?</table>", 's'), '');
+                    //etymsection = etymsection.replace(new RegExp('<div class="NavHead".+?</div>', 's'), '');
+                    //etymsection = etymsection.replace(new RegExp('<div class="NavContent".+?</div>', 's'), '');
+                    //etymsection = etymsection.replace(new RegExp('<div class="Nav.+</div>', 's'), '');
+                    etymsection = etymsection.replace(new RegExp("<a", 'gs'), '<a class="text-cyan-500 underline hover:text-blue-500" target="_blank"');
+                    etymsection = etymsection.replace(new RegExp('href="/', 'gs'), 'href="https://en.wiktionary.org/');
+                    
+                    etymsection = <div dangerouslySetInnerHTML={{ __html: etymsection }} />
+                }
+                setWiktionaryextract(etymsection);
             })
             .catch(error => {
                 console.log(error)
             })
-    }, [])*/
+    }, [])
 
 
     return (
@@ -142,15 +166,43 @@ const KanjiInfo = ({ kanjiData }) => {
                         <Caption title="kun" data={kanjiData.kun} />
                         <Caption title="on" data={kanjiData.on} />
                         <Caption title="pinyin" data={kanjiData.pinyin} />
-                        <Caption title="tags" data={kanjiData.tags} />
+                        <Caption title="jyutping" data={kanjiData.jyutping} />
+                        <Caption title="tags" data=
+                            {tags.map((e, index) => (
+                                <><a onClick={() => {
+                                    dispatch({
+                                        type: 'search',
+                                        title: '#' + e,
+                                        text: '#' + e,
+                                    });
+                                }} key={index}
+                                    className="cursor-pointer text-cyan-500 underline hover:text-blue-500"
+                                >
+                                    #{e} {/*<SearchResult charaobj={kanji} />*/}
+                                </a>&nbsp;</>
+                            ))}
+                        />
                         <Caption title="inclusion" data={<>{kanjiData.inclusion_jomako} (pop culture)<br /> {kanjiData.inclusion_all} (all texts)</>} />
-                        <Caption title="variants" data={kanjiData.variants} />
+                        <Caption title="variants" data=
+                            {variants.map((e, index) => (
+                                <>
+                                    <a onClick={() => {
+                                        dispatch({
+                                            type: 'consult',
+                                            title: e,
+                                            text: e,
+                                        });
+                                    }} key={index}
+                                        className="cursor-pointer text-cyan-500 underline hover:text-blue-500"
+                                    >{e}</a>&nbsp;</>
+                            ))}
+                        />
                         <div className="col-span-2 text-neutral-400 self-center">External search</div>
                         <div className="col-span-2 flex flex-wrap gap-x-3 justify-center">
-                            <div>see in <a className="text-cyan-500 underline hover:text-blue-500" href={`https://zi.tools/zi/${kanjiData.kanji}`}>zi.tools</a></div>
-                            <div>search in <a className="text-cyan-500 underline hover:text-blue-500" href={`https://jisho.org/search/*${kanjiData.kanji}*`}>jisho.org</a></div>
-                            <div>see in <a className="text-cyan-500 underline hover:text-blue-500" href={`https://www.wanikani.com/kanji/${kanjiData.kanji}`}>wanikani</a></div>
-                            <div>see in <a className="text-cyan-500 underline hover:text-blue-500" href={`https://en.wiktionary.org/wiki/${kanjiData.kanji}#Chinese`}>wiktionary</a></div>
+                            <div>see in <a className="text-cyan-500 underline hover:text-blue-500" target="_blank" href={`https://zi.tools/zi/${kanjiData.kanji}`}>zi.tools</a></div>
+                            <div>search in <a className="text-cyan-500 underline hover:text-blue-500" target="_blank" href={`https://jisho.org/search/*${kanjiData.kanji}*`}>jisho.org</a></div>
+                            <div>see in <a className="text-cyan-500 underline hover:text-blue-500" target="_blank" href={`https://www.wanikani.com/kanji/${kanjiData.kanji}`}>wanikani</a></div>
+                            <div>see in <a className="text-cyan-500 underline hover:text-blue-500" target="_blank" href={`https://en.wiktionary.org/wiki/${kanjiData.kanji}#Chinese`}>wiktionary</a></div>
                         </div>
                     </div>
                 </div>
@@ -163,6 +215,7 @@ const KanjiInfo = ({ kanjiData }) => {
 
 const ComponentInfo = ({ character, role }) => {
     const [compData, setCompData] = useState();
+    const dispatch = useTabsDispatch().dispatch;
 
     useEffect(() => {
         fetch(`${apiurl}/kanji/${character}`)
@@ -180,8 +233,16 @@ const ComponentInfo = ({ character, role }) => {
     return (
         <>
             <div className="flex flex-col w-1/3">
-                <div className={`text-2xl ${color(role)}`}>{role}</div>
-                <div className={`mt-2.5 text-8xl font-black font-serif ${color(role)} max-md:text-4xl`}>
+                <div className={`text-2xl select-none ${color(role)}`}>{role}</div>
+                <div
+                    onClick={() => {
+                        dispatch({
+                            type: 'consult',
+                            title: character,
+                            text: character,
+                        });
+                    }}
+                    className={`cursor-pointer mt-2.5 text-8xl font-black font-serif ${color(role)}  ${hovercolor(role)} max-md:text-4xl`}>
                     {character}
                 </div>
                 {compData == undefined ? <></> : <>
