@@ -17,11 +17,6 @@ export default function getComponents(charaobj) {
         for (const symbol of idc) {
             components.push({compchar:symbol,comprole:"Semantic"})
         }
-        /*
-        for (let i = 0; i < idc.length; i++) {
-            console.log(idc.codePointAt((i)))
-            components.push({ compchar: idc.charAt(i), comprole: "Semantic" });
-        }*/
     }
     console.log(components)
     return components

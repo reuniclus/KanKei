@@ -56,26 +56,3 @@ export default function TabList() {
     </>
   );
 }
-
-/*
-function Tab({ tab }) {
-  const [isEditing, setIsEditing] = useState(false);
-  const dispatch = useTabsDispatch();
-  let tabContent = tab.text;
-  let tabTitle = tab.title;
-
-  return (
-    <label>
-      {console.log(tab)}
-      {tab.title}
-      <button onClick={() => {
-        dispatch({
-          type: 'deleted',
-          id: tab.id
-        });
-      }}>
-        Delete
-      </button>
-    </label>
-  );
-}*/

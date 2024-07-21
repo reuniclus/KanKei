@@ -16,176 +16,10 @@ function color(role) {
     return color
 }
 
-const randkanji = ["神", "監", "奇", "寶", "貝", "哦", "我", "會", "納", "入", "阿", "爸", "能", "沒", "有", "反"];
-
-const fakeapi = [
-    {
-        "codepoint": "U+6E0B",
-        "kanji": "渋",
-        "on": "ジュウ",
-        "pinyin": "sè",
-        "jyutping": "gip3",
-        "kun": "しぶ、しぶ.い、しぶ.る",
-        "meaning": "astringent;not going smoothly",
-        "tags": "新字体, 常用, 形聲",
-        "variants": "澁,澀,濇",
-        "JP shinjitai form": "",
-        "idc_analysis": "",
-        "idc_naive": "⿰氵⿱止⿱丷八",
-        "意": "氵",
-        "聲": "歰",
-        "原聲": "",
-        "最原聲": "",
-        "root_phonetic_search": "歰",
-        "聲 pinyin": "sè",
-        "聲 on": "シュウ、ソウ",
-        "聲 jyutping": "sap1 saap3",
-        "components": "氵止丷八刃𣥖",
-        "freq_jp": "1466",
-        "freq_zh": "9000",
-        "inclusion_jomako": "27.00%",
-        "inclusion_all": "3.61%",
-        "high frequency words": "渋い",
-        "mid frequency words": "渋々",
-        "low frequency words": "",
-        "extremely rare words": "",
-        "proper nouns": "渋谷(シブヤ)"
-    },
-    {
-        "codepoint": "U+76E3",
-        "kanji": "監",
-        "on": "カン",
-        "pinyin": "jiān",
-        "jyutping": "gaam1 gaam3",
-        "kun": "かんがみ.る、み.る、しら.べる",
-        "meaning": "oversee",
-        "tags": "常用, 會意",
-        "variants": "监",
-        "JP shinjitai form": "",
-        "idc_analysis": "⿱臥血",
-        "idc_naive": "⿱⿰臣⿱𠂉一皿",
-        "意": "",
-        "聲": "",
-        "原聲": "",
-        "最原聲": "",
-        "root_phonetic_search": "",
-        "聲 pinyin": "",
-        "聲 on": "",
-        "聲 jyutping": "",
-        "components": "臣𠂉一皿臥血",
-        "freq_jp": "687",
-        "freq_zh": "9000",
-        "inclusion_jomako": "49.25%",
-        "inclusion_all": "14.43%",
-        "high frequency words": "監視，監督，監禁",
-        "mid frequency words": "監獄",
-        "low frequency words": "監査",
-        "extremely rare words": null,
-        "proper nouns": null
-    },
-    {
-        "codepoint": "U+95C7",
-        "kanji": "闇",
-        "on": "アン、オン",
-        "pinyin": "àn",
-        "jyutping": "am2 ngam2 am1 ngam1 am3 ngam3",
-        "kun": "やみ、くら.い",
-        "meaning": "pitch dark",
-        "tags": "形聲, 常用",
-        "variants": "𬮴",
-        "JP shinjitai form": "",
-        "idc_analysis": "",
-        "idc_naive": "⿵門音",
-        "意": "門",
-        "聲": "音",
-        "原聲": "",
-        "最原聲": "",
-        "聲 pinyin": "yīn",
-        "聲 on": "オン、イン",
-        "聲 jyutping": "jam1",
-        "components": "門音𠁣𠃛言一立日",
-        "freq_jp": "746",
-        "freq_zh": "9000",
-        "inclusion_jomako": "57.50%",
-        "inclusion_all": "3.10%",
-        "high frequency words": "闇，暗闇",
-        "mid frequency words": "None",
-        "low frequency words": "None",
-        "extremely rare words": "None",
-        "proper nouns": "None"
-    },
-    {
-        "codepoint": "U+9589",
-        "kanji": "閉",
-        "on": "ヘイ",
-        "pinyin": "bì",
-        "jyutping": "bai3",
-        "kun": "と.じる、と.ざす、し.める、し.まる、た.てる",
-        "meaning": "closed",
-        "tags": "會意, 常用",
-        "variants": "闭",
-        "JP shinjitai form": "",
-        "idc_analysis": "",
-        "idc_naive": "⿵門才",
-        "意": "",
-        "聲": "",
-        "原聲": "",
-        "最原聲": "",
-        "聲 pinyin": "",
-        "聲 on": "",
-        "聲 jyutping": "",
-        "components": "門才𠁣𠃛",
-        "freq_jp": "704",
-        "freq_zh": "9000",
-        "inclusion_jomako": "55.00%",
-        "inclusion_all": "7.75%",
-        "high frequency words": "閉じる，閉める，閉じ込める，閉ざす，閉まる，閉鎖，閉店",
-        "mid frequency words": "閉じこめる",
-        "low frequency words": "閉廷",
-        "extremely rare words": "None",
-        "proper nouns": "None"
-    }
-    ,
-    {
-        "codepoint": "U+5FB4",
-        "kanji": "徴",
-        "on": "チョウ",
-        "pinyin": "zhēng",
-        "jyutping": "zing1",
-        "kun": "しるし、め.す",
-        "meaning": "indications;levy;symptom",
-        "tags": "新字体, 常用, 會意",
-        "variants": "徵,征",
-        "JP shinjitai form": "",
-        "idc_analysis": "",
-        "idc_naive": "⿲彳㞷攵",
-        "意": "",
-        "聲": "",
-        "原聲": "",
-        "最原聲": "",
-        "聲 pinyin": "",
-        "聲 on": "",
-        "聲 jyutping": "",
-        "components": "彳㞷攵㞢土山王",
-        "freq_jp": "901",
-        "freq_zh": "9000",
-        "inclusion_jomako": "43.50%",
-        "inclusion_all": "9.84%",
-        "high frequency words": "特徴，象徴",
-        "mid frequency words": null,
-        "low frequency words": null,
-        "extremely rare words": null,
-        "proper nouns": null
-    }
-]
-
-
-
 function Search(query) {
     console.log(query);
     const terms = query.split(' ');
     console.log(terms);
-
 
     let finalquery = '/query?'
     let components = []
@@ -257,10 +91,25 @@ function SearchResults(query) {
                             })
                     }
 
-                    let firsthalf = data.filter(obj => obj.idc_naive.includes(quer) || obj.idc_analysis.includes(quer));
-                    let secondhalf = data.filter(obj => !(obj.idc_naive.includes(quer) || obj.idc_analysis.includes(quer)));
-                    setSearchResults(firsthalf.sort((a, b) => a.kanji.localeCompare(b.kanji)))
-                    setExtraResults(secondhalf.sort((a, b) => a.kanji.localeCompare(b.kanji)))
+                    let firsthalf = data.filter(obj => obj.idc_naive.includes(quer) || obj.idc_analysis.includes(quer)).sort((a, b) => a.kanji.localeCompare(b.kanji));
+                    let secondhalf = data.filter(obj => !(obj.idc_naive.includes(quer) || obj.idc_analysis.includes(quer))).sort((a, b) => a.kanji.localeCompare(b.kanji));
+                    /*if (firsthalf.length == 0 && !quer.includes(" ")) {
+                        for (const symbol of quer) {
+                            if (/\p{Script=Han}/u.test(symbol)) {
+                                fetch(`${apiurl}/kanji/${symbol}`)
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        console.log(data[0]);
+                                        firsthalf.push(data[0])
+                                    })
+                                    .catch(error => {
+                                        console.log(error)
+                                    })
+                            }                            
+                        }
+                    }*/
+                    setSearchResults(firsthalf)
+                    setExtraResults(secondhalf)
                 })
                 .catch(error => {
                     console.log(error)
@@ -288,7 +137,7 @@ function SearchResults(query) {
     else if (/[A-z]/.test(quer)) {
         desc = `Characters with meaning ${quer}`
     }
-    else if (quer.length>1) {
+    else if (quer.length > 1) {
         desc = `Characters with components ${quer}`
     }
     if (quer.includes(' ')) {
@@ -362,8 +211,9 @@ function shorten(string, more = false) {
 
 
 const SearchResult = ({ charaobj }) => {
-    if (!charaobj) { return }
+
     const dispatch = useTabsDispatch().dispatch;
+    if (!charaobj) { return }
     let components = getComponents(charaobj)
 
     return (

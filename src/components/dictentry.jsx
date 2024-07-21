@@ -103,8 +103,8 @@ function DictEntry(kanji) {
                         {components.map((obj, index) => (
                             <ComponentInfo character={obj.compchar} role={obj.comprole} key={index} />
                         ))}
-                        {kanjiData.原聲 ?
-                            <ComponentInfo character={kanjiData.原聲} role="Root phonetic" /> :
+                        {kanjiData.root_phonetic_search ?
+                            <ComponentInfo character={kanjiData.root_phonetic_search} role="Root phonetic" /> :
                             <ComponentInfo character={kanjiData.kanji} role="Root phonetic" />}
                     </div>
                 </div>
