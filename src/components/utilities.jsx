@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react"
-import {matchSorter} from 'match-sorter'
+import { matchSorter } from 'match-sorter'
 
 const apiurl = 'https://sheet.best/api/sheets/1000dcf2-2fe7-428c-9be3-2a50656c18c0/tabs/cjkvi-ids-analysis';
-
 
 export function getComponents(charaobj) {
     if (!charaobj) return []
@@ -17,7 +16,7 @@ export function getComponents(charaobj) {
         components = [{ compchar: charaobj.kanji, comprole: "Empty" }];
     }
     else {
-        let idc = charaobj.idc_analysis == "" ? charaobj.idc_naive : charaobj.idc_analysis;
+        let idc = charaobj.idc_analysis === "" ? charaobj.idc_naive : charaobj.idc_analysis;
         idc = idc.replace(new RegExp("[⿰-⿿ ]", 'gu'), '');
         for (const symbol of idc) {
             components.push({ compchar: symbol, comprole: "Semantic" })
@@ -25,8 +24,6 @@ export function getComponents(charaobj) {
     }
     return components
 }
-
-
 
 export function setColorClass(role) {
     var classname = "";
@@ -41,42 +38,7 @@ export function setColorClass(role) {
     return classname
 }
 
-const fallback = {
-    "codepoint": "U+67D0",
-    "kanji": "某",
-    "on": "ボウ",
-    "pinyin": "mǒu",
-    "jyutping": "mau5",
-    "kun": "それがし、なにがし",
-    "meaning": "so-and-so;a certain",
-    "tags": "會意, 常用",
-    "variants": "厶",
-    "JP shinjitai form": "",
-    "idc_analysis": "",
-    "idc_naive": "⿱甘木",
-    "意": "",
-    "聲": "",
-    "原聲": "",
-    "最原聲": "",
-    "root_phonetic_search": "",
-    "聲 pinyin": "",
-    "聲 on": "",
-    "聲 jyutping": "",
-    "components": "甘木曰",
-    "freq_jp": "1918",
-    "freq_zh": "517",
-    "inclusion_jomako": "16.00%",
-    "inclusion_all": "1.31%",
-    "high frequency words": "",
-    "mid frequency words": "某",
-    "low frequency words": null,
-    "extremely rare words": null,
-    "proper nouns": null
-}
-
 export function processQuery(query) {
-
-
     let finalquery = '/query?'
     let components = []
 
@@ -108,7 +70,7 @@ export function processQuery(query) {
         }
     });
     ///\p{Script=Han}/u.test(symbol)
-    
+
     if (tags.length > 0) finalquery += `tags=${tags.join('')}&`
     if (components.length > 0) finalquery += `components=${components.sort().join('')}&`
     //&freq_jp=__lte(2600)
@@ -118,17 +80,13 @@ export function processQuery(query) {
 
 
 export function Search(query) {
-
     const [searchresults, setSearchResults] = useState([]);
-    const [extraresults, setExtraResults] = useState([]);
-    const [kanjiobj, setKanjiobj] = useState();
 
     useEffect(() => {
         fetch(`${apiurl}${processQuery(query)}&freq_jp=__lte(2600)`)
             .then(response => response.json())
             .then(data => {
-                console.log(data)
-                setSearchResults = data;
+                setSearchResults(data);
             })
             .catch(error => { console.log(error) })
     }, [])
@@ -138,7 +96,12 @@ export function Search(query) {
 
 export function processSearchResultArray(inputarray = [], querystring = '') {
     inputarray = inputarray.sort((a, b) => a.freq_jp - b.freq_jp);
-    if(querystring.length>1) inputarray = matchSorter(inputarray, querystring, {keys: ['meaning', 'romaji_search']})
+
+    if (/[A-z]/.test(querystring)) {
+        let matchsort = matchSorter(inputarray, querystring, { keys: ['meaning', 'romaji_search'] })
+        inputarray = matchsort.concat(inputarray.filter(a => !matchsort.map(b => b.kanji).includes(a.kanji)))
+    }
+
 
     let output = []
     function pushobj(title, array) {
@@ -152,10 +115,10 @@ export function processSearchResultArray(inputarray = [], querystring = '') {
 
     inputarray = inputarray.filter(obj => obj.freq_jp <= 2600)
 
-    if (querystring.length == 1) {
+    if (querystring.length === 1) {
         let phon_series = inputarray.filter(obj =>
-            obj.root_phonetic_search == querystring ||
-                exactmatches[0] ? obj.root_phonetic_search == exactmatches[0].root_phonetic_search : false)
+            obj.root_phonetic_search === querystring ||
+                exactmatches[0] ? obj.root_phonetic_search === exactmatches[0].root_phonetic_search : false)
         pushobj('Characters in the same phonetic series', phon_series)
 
         let direct = inputarray.filter(obj => obj.idc_analysis.includes(querystring) || obj.idc_naive.includes(querystring))
@@ -171,7 +134,7 @@ export function processSearchResultArray(inputarray = [], querystring = '') {
         let romaji = []
         terms.forEach(term => {
             if (term.includes('#')) {
-                switch(term) {
+                switch (term) {
                     case '#常用': tags.push('joyo'); break;
                     case '#人名用': tags.push('jinmeiyou'); break;
                     case '#形声': tags.push('phono-semantic'); break;
@@ -180,14 +143,15 @@ export function processSearchResultArray(inputarray = [], querystring = '') {
                     case '#新字体': tags.push('shinjitai'); break;
                     case '#旧字体': tags.push('kyuujitai'); break;
                     case '#簡体': tags.push('simplified'); break;
+                    default: tags.push(term);
                 }
             }
-            else if(/[ぁ-ゖァ-ヺāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ1-6]/.test(term)){
+            else if (/[ぁ-ゖァ-ヺāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ1-6]/.test(term)) {
                 pronunciations.push(term)
             }
             else {
                 for (const symbol of term) {
-                    if(/\p{Script=Han}/u.test(symbol)) components.push(`${symbol}`)
+                    if (/\p{Script=Han}/u.test(symbol)) components.push(`${symbol}`)
                 }
             }
             if (/[A-z]/.test(term)) {
@@ -195,14 +159,36 @@ export function processSearchResultArray(inputarray = [], querystring = '') {
             }
         })
         let desc = ""
-        if(tags.length>0) desc+=`${tags.join(' ')} `
-        desc+='characters'
-        if(pronunciations.length>0) desc+=` pronounced ${pronunciations.join(',')}`
-        if(components.length>0) desc+=` using ${components.join(', ')} as component${components.length>1?'s':''}`
-        if(romaji.length>0) desc+=` matching "${romaji.join(' ')}"`
+        if (tags.length > 0) desc += `${tags.join(' ')} `
+        desc += 'characters'
+        if (pronunciations.length > 0) desc += ` pronounced ${pronunciations.join(',')}`
+        if (components.length > 0) desc += ` using ${components.join(', ')} as component${components.length > 1 ? 's' : ''}`
+        if (romaji.length > 0) desc += ` matching "${romaji.join(' ')}"`
         pushobj(desc, inputarray)
     }
 
     pushobj('Other matches', inputarray)
     return output
-    }
+}
+
+export function pushLocalStorage(key, value) {
+    let items = JSON.parse(localStorage.getItem(key)) || [];
+    if(items.includes(value)) return
+    if (items.length >= 9) items.shift(); 
+    items.push(value);
+    localStorage.setItem(key, JSON.stringify(items));
+}
+
+export function bookmarkLocalStorage(key, value) {
+    let items = JSON.parse(localStorage.getItem(key)) || [];
+    if(items.includes(value)) return
+    if (items.length >= 18) items.shift(); 
+    items.push(value);
+    localStorage.setItem(key, JSON.stringify(items));
+}
+
+export function removeLocalStorage(key,value){
+    let items = JSON.parse(localStorage.getItem(key)) || [];
+    items = items.filter(item => item !== value)
+    localStorage.setItem(key, JSON.stringify(items));
+}

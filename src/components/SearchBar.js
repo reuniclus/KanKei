@@ -1,25 +1,23 @@
 import { useState } from 'react';
-import { useTabs, useTabsDispatch } from './TabsContext.js';
+import { useTabsDispatch } from './TabsContext.js';
 
 export default function SearchBar() {
   const [text, setText] = useState('');
   const dispatch = useTabsDispatch().dispatch;
 
-  const tabs = useTabs().tabs;
-  const activeTab = useTabs().activeTab;
-  const dispatchTab = useTabsDispatch().dispatchTab;
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    dispatch({
+      type: 'search',
+      title: text,
+      text: text,
+    });
+    setText('');
+  }
 
   return (
     <>
-      <form className='flex flex-inline' onSubmit={e => {
-        e.preventDefault();
-        dispatch({
-          type: 'search',
-          title: text,
-          text: text,
-        });
-        setText('');
-      }}>
+      <form className='flex flex-inline' onSubmit={handleSubmit}>
         <input
           placeholder="Search Kanji"
           value={text}
@@ -33,5 +31,3 @@ export default function SearchBar() {
     </>
   );
 }
-
-//let nextId = 3;

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { useTabs, useTabsDispatch } from './TabsContext.js';
-import { getComponents, setColorClass} from './utilities'
+import { getComponents, setColorClass } from './utilities'
+import { bookmarkLocalStorage, removeLocalStorage } from './utilities.jsx'
 
 
 //import axios from "axios";
@@ -80,7 +81,7 @@ const KanjiInfo = ({ kanjiData }) => {
                     //etymsection = etymsection.replace(new RegExp('<div class="Nav.+</div>', 's'), '');
                     etymsection = etymsection.replace(new RegExp("<a", 'gs'), '<a class="text-cyan-500 underline hover:text-blue-500" target="_blank"');
                     etymsection = etymsection.replace(new RegExp('href="/', 'gs'), 'href="https://en.wiktionary.org/');
-                    
+
                     etymsection = <div dangerouslySetInnerHTML={{ __html: etymsection }} />
                 }
                 setWiktionaryextract(etymsection);
@@ -93,7 +94,8 @@ const KanjiInfo = ({ kanjiData }) => {
 
     return (
         <div className="flex flex-col px-5 py-px min-w-[30rem]">
-            <div>
+            <div className="relative">
+                <BookmarkButton kanji={kanjiData.kanji} />
                 <div className="flex gap-5 max-md:flex-col max-md:gap-0">
                     <div className="flex flex-col gap-3 items-center">
                         <div className="text-9xl font-black font-serif">
@@ -249,5 +251,41 @@ const KanjiListItem = ({ charobj }) => <>
     </div>
 
 </>
+
+const isBookmarked = (entry) => {
+    const bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
+    return bookmarks.includes(entry);
+};
+
+const BookmarkButton = (kanji) => {
+    const [bookmarked, setBookmarked] = useState(isBookmarked(kanji.kanji));
+
+    const handleOnClick = (event) => {
+        if (bookmarked) {
+            removeLocalStorage('bookmarks', kanji.kanji)
+        }
+        else {
+            bookmarkLocalStorage('bookmarks', kanji.kanji)
+        }
+        setBookmarked(isBookmarked(kanji.kanji))
+    }
+
+    
+
+    let addcolor = "bg-cyan-500 hover:bg-cyan-600"
+    let removecolor = "bg-yellow-500 hover:bg-yellow-600"
+
+
+
+    return (
+        <button className={(bookmarked ? removecolor : addcolor) + " absolute right-0 text-white p-1.5 rounded-lg flex flex-col self-stretch"} onClick={handleOnClick}>
+            {bookmarked ? <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="m3 3 1.664 1.664M21 21l-1.5-1.5m-5.485-1.242L12 17.25 4.5 21V8.742m.164-4.078a2.15 2.15 0 0 1 1.743-1.342 48.507 48.507 0 0 1 11.186 0c1.1.128 1.907 1.077 1.907 2.185V19.5M4.664 4.664 19.5 19.5" />
+            </svg> : <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z" />
+            </svg>}
+        </button>
+    )
+}
 
 export default DictEntry
