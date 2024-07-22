@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "/KanKei/static/js/main.eea9077c.js",
+    "main.js": "/KanKei/static/js/main.f68e368e.js",
     "index.html": "/KanKei/index.html",
-    "main.eea9077c.js.map": "/KanKei/static/js/main.eea9077c.js.map"
+    "main.f68e368e.js.map": "/KanKei/static/js/main.f68e368e.js.map"
   },
   "entrypoints": [
-    "static/js/main.eea9077c.js"
+    "static/js/main.f68e368e.js"
   ]
 }
