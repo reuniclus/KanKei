@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTabs, useTabsDispatch } from './TabsContext.js';
 
-export default function AddTab() {
+export default function SearchBar() {
   const [text, setText] = useState('');
   const dispatch = useTabsDispatch().dispatch;
 

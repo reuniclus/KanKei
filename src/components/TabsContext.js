@@ -14,7 +14,7 @@ export function TabsProvider({ children }) {
 
   <p>To search for a Kanji, you can enter any combination of kanji, components,  pronunciations, or meanings. For example:</p>
   <ul><li>English search: <Searchlink text="house"/></li>
-    <li>Component search: <Searchlink text="釆田羽"/> </li>
+    <li>Component search: <Searchlink text="釆田"/> </li>
     <li>Kanji search: <Searchlink text="門"/> </li>
     <li>Tag search: <Searchlink text="#常用"/> </li>
     <li>Combined search: <Searchlink text="#常用 各 ラク"/>   (joyo kanji that include 各 and are pronounced raku)  </li>
@@ -51,7 +51,7 @@ function tabsReducer(tabs, action) {
       return [...tabs, {
         id: activeTabData.idcounter++,
         title: `Search - ${action.title}`,
-        text: <SearchResults query={action.text} />,
+        text: <SearchResults searchresults={action.text} />,
       }];
     }
     case 'consult': {

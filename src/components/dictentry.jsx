@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react"
 import { useTabs, useTabsDispatch } from './TabsContext.js';
-import getComponents from "./getcomponents.js";
+import { getComponents, setColorClass} from './utilities'
+
 
 //import axios from "axios";
 const apiurl = 'https://sheet.best/api/sheets/1000dcf2-2fe7-428c-9be3-2a50656c18c0/tabs/cjkvi-ids-analysis';
-const wiktionaryapi = // 'https://en.wiktionary.org/w/api.php?origin=*&format=json&action=query&prop=extracts&explaintext&titles='
-    'https://en.wiktionary.org/w/api.php?origin=*&action=parse&formatversion=2&prop=text&format=json&page='
+const wiktionaryapi = 'https://en.wiktionary.org/w/api.php?origin=*&action=parse&formatversion=2&prop=text&format=json&page='
 
 const Caption = ({ title, data }) => {
     return (<div className="flex gap-3 justify">
@@ -14,64 +14,6 @@ const Caption = ({ title, data }) => {
     </div>)
 }
 
-
-function color(role) {
-    var color = "";
-    switch (role) {
-        case 'Semantic': color = 'text-cyan-700'; break;
-        case 'Phonetic': color = 'text-red-700'; break;
-        case 'Root phonetic': color = 'text-red-900'; break;
-        case 'Empty': color = 'text-purple-600'; break;
-        case 'Form': color = 'text-orange-400'; break;
-    }
-    return color
-}
-
-function hovercolor(role) {
-    var color = "";
-    switch (role) {
-        case 'Semantic': color = 'text-cyan-800'; break;
-        case 'Phonetic': color = 'text-red-800'; break;
-        case 'Root phonetic': color = 'text-red-950'; break;
-        case 'Empty': color = 'text-purple-700'; break;
-        case 'Form': color = 'text-orange-500'; break;
-    }
-    return "hover:" + color
-}
-
-
-const fallback = {
-    "codepoint": "U+67D0",
-    "kanji": "某",
-    "on": "ボウ",
-    "pinyin": "mǒu",
-    "jyutping": "mau5",
-    "kun": "それがし、なにがし",
-    "meaning": "so-and-so;a certain",
-    "tags": "會意, 常用",
-    "variants": "厶",
-    "JP shinjitai form": "",
-    "idc_analysis": "",
-    "idc_naive": "⿱甘木",
-    "意": "",
-    "聲": "",
-    "原聲": "",
-    "最原聲": "",
-    "root_phonetic_search": "",
-    "聲 pinyin": "",
-    "聲 on": "",
-    "聲 jyutping": "",
-    "components": "甘木曰",
-    "freq_jp": "1918",
-    "freq_zh": "517",
-    "inclusion_jomako": "16.00%",
-    "inclusion_all": "1.31%",
-    "high frequency words": "",
-    "mid frequency words": "某",
-    "low frequency words": null,
-    "extremely rare words": null,
-    "proper nouns": null
-}
 
 function DictEntry(kanji) {
 
@@ -233,7 +175,7 @@ const ComponentInfo = ({ character, role }) => {
     return (
         <>
             <div className="flex flex-col w-1/3">
-                <div className={`text-2xl select-none ${color(role)}`}>{role}</div>
+                <div className={`text-2xl select-none ${setColorClass(role)}`}>{role}</div>
                 <div
                     onClick={() => {
                         dispatch({
@@ -242,7 +184,7 @@ const ComponentInfo = ({ character, role }) => {
                             text: character,
                         });
                     }}
-                    className={`cursor-pointer mt-2.5 text-8xl font-black font-serif ${color(role)}  ${hovercolor(role)} max-md:text-4xl`}>
+                    className={`cursor-pointer mt-2.5 text-8xl font-black font-serif ${setColorClass(role)} max-md:text-4xl`}>
                     {character}
                 </div>
                 {compData == undefined ? <></> : <>
@@ -282,7 +224,7 @@ const ComponentSeries = ({ character, role }) => {
 
     return (
         <>
-            <div className={`flex gap-1 justify-between self-stretch pr-2 mt-2.5 ${color(role)}`}>
+            <div className={`flex gap-1 justify-between self-stretch pr-2 mt-2.5 ${setColorClass(role)}`}>
                 <div class="whitespace-nowrap">{role} Series of {character} </div>v
             </div>
             <div className="flex flex-col justify-center gap-2 w-full">
