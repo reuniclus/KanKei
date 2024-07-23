@@ -1,7 +1,7 @@
 import { createContext, useContext, useReducer } from 'react';
 import SearchResults from './searchresults';
 import DictEntry from './dictentry';
-import {pushLocalStorage, Searchlink} from'./utilities.jsx'
+import { pushLocalStorage, Searchlink } from'./utilities.jsx'
 
 const TabsContext = createContext(null);
 const TabsDispatchContext = createContext(null);
@@ -73,7 +73,7 @@ const initialTabs = [
   }
 ];
 
-const DefaultTab= () => <>
+const DefaultTab= () => <><div className='max-lg:p-5'>
 <p>KanKei is a Kanji/Hanzi lookup tool focused on the breaking down Kanji into components and displaying the etymological relationships between multiple kanji.</p>
 <p>The purpose of component-based kanji learning is to help learners create mental connections between kanji to make them intuitive to learn without rote memorization.</p>
 <p>Similar resources already exist, such as <a className="text-cyan-500 underline hover:text-blue-500" target="_blank" rel="noreferrer" href={`https://hanzicraft.com/`}>HanziCraft</a> and <a className="text-cyan-500 underline hover:text-blue-500" target="_blank" rel="noreferrer" href={`https://zi.tools`}>zi.tools</a>, however those are more targetted towards Chinese learning. This site is more focused towards Japanese Kanji, although it still displays data for Mandarin or Cantonese.</p>
@@ -85,10 +85,8 @@ const DefaultTab= () => <>
   <li>Tag search: <Searchlink text="#常用"/> </li>
   <li>Combined search: <Searchlink text="#常用 各 ラク"/>   (joyo kanji that include 各 and are pronounced raku)  </li>
 </ul>
+</div>
 </>
-
-
-
 
 const activeTabData = {
   activeTab: 0,

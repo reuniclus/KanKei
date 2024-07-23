@@ -32,27 +32,20 @@ const History = () => {
     };
 
     return (<>
-        <div>
-            <HeaderButton onClick={toggleHistory} title="History" img="https://cdn.builder.io/api/v1/image/assets/TEMP/4bc70949dbf3f0f7f88a8527c3f78dbb5929fb598ce91c308f604f984fc96f68?" />
+        <HeaderButton onClick={toggleHistory} title={<>History {showHistory && (
+            <div ref={dropdownRef} className="absolute shadow-lg px-1.5 py-2.5 rounded-md bg-white border z-10 flex flex-col gap-1 min-w-24">
+                <h2>Search History</h2>
+                {searchHistory.map((search, index) => (
+                    <Searchlink key={index} text={search} className={"text-gray-600 hover:text-cyan-500 hover:bg-slate-100 rounded"} />
+                ))}
+                <h2>Consult History</h2>
+                {consultHistory.map((item, index) => (
+                <ConsultLink key={index} text={item} className={"text-gray-600 hover:text-cyan-500 hover:bg-slate-100 rounded"}/>
+                ))}
+            </div>
+        )}</>} path={<path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />} />
 
-            {showHistory && (
-                <div ref={dropdownRef} className="absolute shadow-md p-2.5 rounded-md bg-white border z-10">
-                    <h2>Search History</h2>
-                    <ul>
-                        {searchHistory.map((search, index) => (
-                            <li key={index}><Searchlink text={search}/></li>
-                        ))}
-                    </ul>
 
-                    <h2>Consult History</h2>
-                    <ul>
-                        {consultHistory.map((item, index) => (
-                            <li key={index}><ConsultLink text={item}/></li>
-                        ))}
-                    </ul>
-                </div>
-            )}
-        </div>
     </>
     );
 };

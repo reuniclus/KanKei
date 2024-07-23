@@ -79,7 +79,7 @@ export function processQuery(query) {
     return finalquery
 }
 
-
+/*
 export function Search(query) {
     const [searchresults, setSearchResults] = useState([]);
 
@@ -93,7 +93,7 @@ export function Search(query) {
     }, [])
     return searchresults
 }
-
+*/
 
 export function processSearchResultArray(inputarray = [], querystring = '') {
     inputarray = inputarray.sort((a, b) => a.freq_jp - b.freq_jp);
@@ -117,14 +117,14 @@ export function processSearchResultArray(inputarray = [], querystring = '') {
     inputarray = inputarray.filter(obj => obj.freq_jp <= 2600)
 
     if (querystring.length === 1) {
-        let root_phonetic = exactmatches[0] ? exactmatches[0].root_phonetic_search : querystring; 
+        let root_phonetic = exactmatches[0] ? exactmatches[0].root_phonetic_search : querystring;
         let phon_series = inputarray.filter(obj =>
-            obj.root_phonetic_search && 
-            obj.root_phonetic_search === root_phonetic || 
-            obj.root_phonetic_search === querystring )
-            inputarray.forEach(obj => {
-                if((obj.root_phonetic_search === root_phonetic) || (obj.root_phonetic_search === querystring)) console.log(obj.kanji + ' root: ' + obj.root_phonetic_search)
-            }); 
+            obj.root_phonetic_search &&
+            obj.root_phonetic_search === root_phonetic ||
+            obj.root_phonetic_search === querystring)
+        inputarray.forEach(obj => {
+            if ((obj.root_phonetic_search === root_phonetic) || (obj.root_phonetic_search === querystring)) console.log(obj.kanji + ' root: ' + obj.root_phonetic_search)
+        });
         pushobj('Characters in the same phonetic series', phon_series)
 
         let direct = inputarray.filter(obj => obj.idc_analysis.includes(querystring) || obj.idc_naive.includes(querystring))
@@ -179,68 +179,87 @@ export function processSearchResultArray(inputarray = [], querystring = '') {
 
 export function pushLocalStorage(key, value) {
     let items = JSON.parse(localStorage.getItem(key)) || [];
-    if(items.includes(value)) return
-    if (items.length >= 9) items.shift(); 
+    if (items.includes(value)) return
+    if (items.length >= 9) items.shift();
     items.push(value);
     localStorage.setItem(key, JSON.stringify(items));
 }
 
 export function bookmarkLocalStorage(key, value) {
     let items = JSON.parse(localStorage.getItem(key)) || [];
-    if(items.includes(value)) return
-    if (items.length >= 18) items.shift(); 
+    if (items.includes(value)) return
+    if (items.length >= 18) items.shift();
     items.push(value);
     localStorage.setItem(key, JSON.stringify(items));
 }
 
-export function removeLocalStorage(key,value){
+export function removeLocalStorage(key, value) {
     let items = JSON.parse(localStorage.getItem(key)) || [];
     items = items.filter(item => item !== value)
     localStorage.setItem(key, JSON.stringify(items));
 }
 
-export const Searchlink = ({ text }) => {
-    const dispatch = useTabsDispatch().dispatch;
-    return (<>
-      <button
-        onClick={() => {
-          dispatch({
-            type: 'search',
-            title: text,
-            text: text,
-          });
-        }}
-        className="text-cyan-500 underline hover:text-blue-500 cursor-pointer">
-        {text}
-      </button>
-    </>)
-  }
-  
-  export const ConsultLink = ({ text }) => {
-    const dispatch = useTabsDispatch().dispatch;
-    return (<>
-      <button
-        onClick={() => {
-          dispatch({
-            type: 'consult',
-            title: text,
-            text: text,
-          });
-        }}
-        className="text-cyan-500 underline hover:text-blue-500 cursor-pointer">
-        {text}
-      </button>
-    </>)
-  }
 
- export function shorten(string, more = false) {
+export const NewSearch = ( text ) => {
+    const dispatch = useTabsDispatch().dispatch;
+    dispatch({
+        type: 'search',
+        title: text,
+        text: text,
+    })
+}
+
+export const NewConsult = ( text ) => {
+    const dispatch = useTabsDispatch().dispatch;
+    dispatch({
+        type: 'consult',
+        title: text,
+        text: text,
+    })
+}
+
+export const Searchlink = ({ text, className }) => {
+    const dispatch = useTabsDispatch().dispatch;
+    return (<>
+        <button
+            onClick={() => {
+                dispatch({
+                    type: 'search',
+                    title: text,
+                    text: text,
+                });
+            }}
+            className={className ? className : "text-cyan-500 underline hover:text-blue-500 cursor-pointer"}>
+            {text}
+        </button>
+    </>)
+}
+
+export const ConsultLink = ({ text, className }) => {
+    const dispatch = useTabsDispatch().dispatch;
+    return (<>
+        <button
+            onClick={() => {
+                dispatch({
+                    type: 'consult',
+                    title: text,
+                    text: text,
+                });
+            }}
+            className={className ? className : "text-cyan-500 underline hover:text-blue-500 cursor-pointer"}>
+            {text}
+        </button>
+    </>)
+}
+
+export function shorten(string, more = false) {
     if (more) return string.replace(new RegExp("[、;].+$", ''), '')
     else return string.replace(new RegExp("([^、;]*[、;][^、;]*).*", 'g'), '$1')
 }
 
 
 
-  export function toHalfWidth(input) {
+export function toHalfWidth(input) {
     const fullwidthToHalfwidthMap = {
         'ア': 'ｱ', 'イ': 'ｲ', 'ウ': 'ｳ', 'エ': 'ｴ', 'オ': 'ｵ',
         'カ': 'ｶ', 'キ': 'ｷ', 'ク': 'ｸ', 'ケ': 'ｹ', 'コ': 'ｺ',

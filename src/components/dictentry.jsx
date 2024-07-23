@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useTabs, useTabsDispatch } from './TabsContext.js';
-import { getComponents, setColorClass } from './utilities'
+import { getComponents, Searchlink, setColorClass } from './utilities'
 import { bookmarkLocalStorage, removeLocalStorage, ConsultLink, shorten, toHalfWidth } from './utilities.jsx'
 //import { Accordion } from "./ui";
 
@@ -101,7 +101,7 @@ const KanjiInfo = ({ kanjiData }) => {
             <BookmarkButton kanji={kanjiData.kanji} />
             <div className="flex gap-5 max-sm:flex-col max-md:gap-0">
                 <div className="flex flex-col gap-3 items-center xl:max-w-32">
-                    <div className="text-9xl font-bold font-serif hover:font-light hover:font-sans">
+                    <div className="text-9xl font-medium font-serif hover:font-light hover:font-sans">
                         {kanjiData.kanji}
                     </div>
                     <div className="">
@@ -116,32 +116,15 @@ const KanjiInfo = ({ kanjiData }) => {
                     <Caption title="jyutping" data={kanjiData.jyutping} />
                     <Caption title="tags" data=
                         {tags.map((e, index) => (
-                            <><a onClick={() => {
-                                dispatch({
-                                    type: 'search',
-                                    title: '#' + e,
-                                    text: '#' + e,
-                                });
-                            }} key={index}
-                                className="cursor-pointer text-cyan-500 underline hover:text-blue-500"
-                            >
-                                #{e} {/*<SearchResult charaobj={kanji} />*/}
-                            </a>&nbsp;</>
+                            <>
+                            <Searchlink text={'#' + e}/>&nbsp;</>
                         ))}
                     />
                     <Caption title="inclusion" data={<>{kanjiData.inclusion_jomako} (pop culture)<br /> {kanjiData.inclusion_all} (all texts)</>} />
                     <Caption title="variants" data=
                         {variants.map((e, index) => (
                             <>
-                                <a onClick={() => {
-                                    dispatch({
-                                        type: 'consult',
-                                        title: e,
-                                        text: e,
-                                    });
-                                }} key={index}
-                                    className="cursor-pointer text-cyan-500 underline hover:text-blue-500"
-                                >{e}</a>&nbsp;</>
+                            <ConsultLink text={e}/>&nbsp;</>
                         ))}
                     />
                     <div className="flex max-xl:gap-3 xl:flex-col">
@@ -150,7 +133,7 @@ const KanjiInfo = ({ kanjiData }) => {
                             <div><a className="text-cyan-500 underline hover:text-blue-500" target="_blank" href={`https://zi.tools/zi/${kanjiData.kanji}`}>full data</a></div>
                             <div><a className="text-cyan-500 underline hover:text-blue-500" target="_blank" href={`https://jisho.org/search/*${kanjiData.kanji}*`}>word search</a></div>
                             <div><a className="text-cyan-500 underline hover:text-blue-500" target="_blank" href={`https://www.wanikani.com/kanji/${kanjiData.kanji}`}>mnemonics</a></div>
-                            <div><a className="text-cyan-500 underline hover:text-blue-500" target="_blank" href={`https://humanum.arts.cuhk.edu.hk/Lexis/lexi-mf/search.php?word=/${kanjiData.kanji}`}>etymology</a></div>
+                            <div><a className="text-cyan-500 underline hover:text-blue-500" target="_blank" href={`https://humanum.arts.cuhk.edu.hk/Lexis/lexi-mf/search.php?word=${kanjiData.kanji}`}>etymology</a></div>
                             <div><a className="text-cyan-500 underline hover:text-blue-500" target="_blank" href={`https://en.wiktionary.org/wiki/${kanjiData.kanji}#Chinese`}>wiktionary</a></div>
                         </div>
                     </div>
@@ -267,7 +250,7 @@ const KanjiListItem = ({ charobj }) => {
                 text: charobj.kanji,
             });
         }}
-            className="flex gap-1.5 items-center justify-start text-left tracking-tight hover:bg-gray-100 py-0.5 pl-1">
+            className="flex gap-1.5 items-center justify-start text-left tracking-tight hover:bg-gray-100 py-0.5 pl-1 rounded-md">
             <span className="text-xl">{charobj.kanji}</span>
             <span className="w-[6ch] text-sm shrink-0">
                 {shorten(charobj.on, true)}

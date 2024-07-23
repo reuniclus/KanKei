@@ -34,30 +34,3 @@ export default function App({ children }) {
     </>
   );
 }
-
-/*
-        <ContextProvider>
-      <Header/>
-      <Tabber/>
-      </ContextProvider>
-       <ContextProvider>
-      <Header onSubmit={(value) => setMyValue(value)} />
-      <Tabber query={myValue} />
-      </ContextProvider>
-*/
-
-//<SearchResults query={myValue} />
-
-/*
-
-
-export default function TabApp() {
-  return (
-    <TabsProvider>
-      <h1>Day off in Kyoto</h1>
-      <AddTab />
-      <TabList />
-    </TabsProvider>
-  );
-}
-*/
