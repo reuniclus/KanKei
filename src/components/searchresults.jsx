@@ -1,6 +1,6 @@
 import { useEffect, useState, useContext } from "react";
 import { useTabs, useTabsDispatch } from './TabsContext.js';
-import { getComponents, setColorClass, processQuery, processSearchResultArray } from './utilities';
+import { getComponents, setColorClass, processQuery, processSearchResultArray, shorten } from './utilities';
 
 const apiurl = 'https://sheet.best/api/sheets/1000dcf2-2fe7-428c-9be3-2a50656c18c0/tabs/cjkvi-ids-analysis';
 
@@ -41,7 +41,7 @@ function SearchResults(searchresults) {
 
 
 const SearchSubtitle = ({ text }) => <>
-    <div className="text-sm self-center text-neutral-400 ">
+    <div className="text-sm self-center text-neutral-500 ">
         {text}
     </div>
 </>
@@ -54,16 +54,16 @@ const Variants = ({ charaobj }) => {
         <>
             {variants.length > 0 ? <>
                 <SearchSubtitle text="Character variants" />
-                <div className="rounded-lg w-[30rem]  self-center flex justify-around">
+                <div className="rounded-lg w-full  self-center flex justify-evenly">
                     {variants.map((e, index) => (
-                        <button onClick={() => {
-                            dispatch({
-                                type: 'consult',
-                                title: e,
-                                text: e,
-                            });
-                        }} key={index}
-                            className="text-4xl font-black font-serif p-4 rounded-lg flex gap-2 bg-slate-100 hover:bg-slate-200"
+                        <button className="text-4xl font-medium font-serif p-4 rounded-lg flex gap-2 bg-slate-100 hover:bg-slate-200"
+                            onClick={() => {
+                                dispatch({
+                                    type: 'consult',
+                                    title: e,
+                                    text: e,
+                                });
+                            }} key={index}
                         >
                             {e}
                         </button>
@@ -75,11 +75,6 @@ const Variants = ({ charaobj }) => {
 }
 
 
-function shorten(string, more = false) {
-    if (more) return string.replace(new RegExp("[、;].+$", ''), '')
-    else return string.replace(new RegExp("([^、;]*[、;][^、;]*).*", 'g'), '$1')
-}
-
 
 const SearchResult = ({ charaobj }) => {
 
@@ -88,8 +83,9 @@ const SearchResult = ({ charaobj }) => {
     let components = getComponents(charaobj)
 
     return (
-        <div className="mx-auto w-[32rem] flex gap-3 items-center bg-slate-50 hover:bg-slate-100 rounded-lg p-2 justify-stretch">
-            <button className="p-4 rounded-lg flex gap-2 hover:bg-slate-200 w-1/2"
+        <div className="mx-auto flex bg-slate-50 hover:bg-slate-100 rounded-lg justify-between items-stretch
+        p-2 sm:gap-3 max-sm:p-0 w-full max-w-[32rem]">
+            <button className="rounded-lg flex hover:bg-slate-200 p-2 gap-2.5 items-center min-w-0 grow"
                 onClick={() => {
                     dispatch({
                         type: 'consult',
@@ -97,14 +93,14 @@ const SearchResult = ({ charaobj }) => {
                         text: charaobj.kanji,
                     });
                 }}>
-                <div className="text-4xl font-black font-serif">{charaobj.kanji}</div>
-                <div className="flex flex-col text-sm shrink-0 grow">
-                    <div className="max-w-40 overflow-hidden text-ellipsis text-nowrap">{shorten(charaobj.kun, true)} {shorten(charaobj.on)} {charaobj.pinyin}</div>
-                    <div className="max-w-40 overflow-hidden text-ellipsis text-nowrap">{shorten(charaobj.meaning)}</div>
+                <div className="font-medium font-serif table-cell align-middle text-4xl sm:text-[2.5rem]">{charaobj.kanji}</div>
+                <div className="flex flex-col text-sm grow min-w-0 text-left">
+                    <div className="w-full min-w-0 overflow-hidden text-ellipsis text-nowrap">{shorten(charaobj.kun, true)} {shorten(charaobj.on)} {charaobj.pinyin}</div>
+                    <div className="w-full min-w-0 overflow-hidden text-ellipsis text-nowrap">{shorten(charaobj.meaning)}</div>
                 </div>
             </button>
 
-            <span className="flex w-1/2 gap-2 justify-center">
+            <span className="flex gap-2 justify-center basis-28">
                 {components.map((obj, index) => (
                     <button
                         onClick={() => {
@@ -114,9 +110,9 @@ const SearchResult = ({ charaobj }) => {
                                 text: obj.compchar,
                             });
                         }}
-                        className={`rounded-lg p-2 hover:bg-slate-200 flex flex-col ${setColorClass(obj.comprole)}`} key={index}>
-                        <div className="text-sm select-none">{obj.comprole} </div>
-                        <div className="self-center text-3xl font-black font-serif">{obj.compchar}</div>
+                        className={`rounded-lg hover:bg-slate-200 flex flex-col ${setColorClass(obj.comprole)} justify-center size-[4rem] max-sm:w-[3rem]`} key={index}>
+                        <div className="scale-x-[.85] self-center text-sm select-none">{obj.comprole} </div>
+                        <div className="max-sm:text-2xl self-center text-3xl font-medium font-serif">{obj.compchar}</div>
                     </button>
                 ))}
             </span>
@@ -124,37 +120,5 @@ const SearchResult = ({ charaobj }) => {
     )
 }
 
-const fallback = {
-    "codepoint": "U+67D0",
-    "kanji": "某",
-    "on": "ボウ",
-    "pinyin": "mǒu",
-    "jyutping": "mau5",
-    "kun": "それがし、なにがし",
-    "meaning": "so-and-so;a certain",
-    "tags": "會意, 常用",
-    "variants": "厶",
-    "JP shinjitai form": "",
-    "idc_analysis": "",
-    "idc_naive": "⿱甘木",
-    "意": "",
-    "聲": "",
-    "原聲": "",
-    "最原聲": "",
-    "root_phonetic_search": "",
-    "聲 pinyin": "",
-    "聲 on": "",
-    "聲 jyutping": "",
-    "components": "甘木曰",
-    "freq_jp": "1918",
-    "freq_zh": "517",
-    "inclusion_jomako": "16.00%",
-    "inclusion_all": "1.31%",
-    "high frequency words": "",
-    "mid frequency words": "某",
-    "low frequency words": null,
-    "extremely rare words": null,
-    "proper nouns": null
-}
 
 export default SearchResults

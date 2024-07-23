@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { matchSorter } from 'match-sorter'
+import { useTabsDispatch } from './TabsContext.js';
 
 const apiurl = 'https://sheet.best/api/sheets/1000dcf2-2fe7-428c-9be3-2a50656c18c0/tabs/cjkvi-ids-analysis';
 
@@ -116,9 +117,14 @@ export function processSearchResultArray(inputarray = [], querystring = '') {
     inputarray = inputarray.filter(obj => obj.freq_jp <= 2600)
 
     if (querystring.length === 1) {
+        let root_phonetic = exactmatches[0] ? exactmatches[0].root_phonetic_search : querystring; 
         let phon_series = inputarray.filter(obj =>
-            obj.root_phonetic_search === querystring ||
-                exactmatches[0] ? obj.root_phonetic_search === exactmatches[0].root_phonetic_search : false)
+            obj.root_phonetic_search && 
+            obj.root_phonetic_search === root_phonetic || 
+            obj.root_phonetic_search === querystring )
+            inputarray.forEach(obj => {
+                if((obj.root_phonetic_search === root_phonetic) || (obj.root_phonetic_search === querystring)) console.log(obj.kanji + ' root: ' + obj.root_phonetic_search)
+            }); 
         pushobj('Characters in the same phonetic series', phon_series)
 
         let direct = inputarray.filter(obj => obj.idc_analysis.includes(querystring) || obj.idc_naive.includes(querystring))
@@ -191,4 +197,68 @@ export function removeLocalStorage(key,value){
     let items = JSON.parse(localStorage.getItem(key)) || [];
     items = items.filter(item => item !== value)
     localStorage.setItem(key, JSON.stringify(items));
+}
+
+export const Searchlink = ({ text }) => {
+    const dispatch = useTabsDispatch().dispatch;
+    return (<>
+      <button
+        onClick={() => {
+          dispatch({
+            type: 'search',
+            title: text,
+            text: text,
+          });
+        }}
+        className="text-cyan-500 underline hover:text-blue-500 cursor-pointer">
+        {text}
+      </button>
+    </>)
+  }
+  
+  export const ConsultLink = ({ text }) => {
+    const dispatch = useTabsDispatch().dispatch;
+    return (<>
+      <button
+        onClick={() => {
+          dispatch({
+            type: 'consult',
+            title: text,
+            text: text,
+          });
+        }}
+        className="text-cyan-500 underline hover:text-blue-500 cursor-pointer">
+        {text}
+      </button>
+    </>)
+  }
+
+ export function shorten(string, more = false) {
+    if (more) return string.replace(new RegExp("[、;].+$", ''), '')
+    else return string.replace(new RegExp("([^、;]*[、;][^、;]*).*", 'g'), '$1')
+}
+
+
+
+  export function toHalfWidth(input) {
+    const fullwidthToHalfwidthMap = {
+        'ア': 'ｱ', 'イ': 'ｲ', 'ウ': 'ｳ', 'エ': 'ｴ', 'オ': 'ｵ',
+        'カ': 'ｶ', 'キ': 'ｷ', 'ク': 'ｸ', 'ケ': 'ｹ', 'コ': 'ｺ',
+        'サ': 'ｻ', 'シ': 'ｼ', 'ス': 'ｽ', 'セ': 'ｾ', 'ソ': 'ｿ',
+        'タ': 'ﾀ', 'チ': 'ﾁ', 'ツ': 'ﾂ', 'テ': 'ﾃ', 'ト': 'ﾄ',
+        'ナ': 'ﾅ', 'ニ': 'ﾆ', 'ヌ': 'ﾇ', 'ネ': 'ﾈ', 'ノ': 'ﾉ',
+        'ハ': 'ﾊ', 'ヒ': 'ﾋ', 'フ': 'ﾌ', 'ヘ': 'ﾍ', 'ホ': 'ﾎ',
+        'マ': 'ﾏ', 'ミ': 'ﾐ', 'ム': 'ﾑ', 'メ': 'ﾒ', 'モ': 'ﾓ',
+        'ヤ': 'ﾔ', 'ユ': 'ﾕ', 'ヨ': 'ﾖ',
+        'ラ': 'ﾗ', 'リ': 'ﾘ', 'ル': 'ﾙ', 'レ': 'ﾚ', 'ロ': 'ﾛ',
+        'ワ': 'ﾜ', 'ヲ': 'ｦ', 'ン': 'ﾝ',
+        'ガ': 'ｶﾞ', 'ギ': 'ｷﾞ', 'グ': 'ｸﾞ', 'ゲ': 'ｹﾞ', 'ゴ': 'ｺﾞ',
+        'ザ': 'ｻﾞ', 'ジ': 'ｼﾞ', 'ズ': 'ｽﾞ', 'ゼ': 'ｾﾞ', 'ゾ': 'ｿﾞ',
+        'ダ': 'ﾀﾞ', 'ヂ': 'ﾁﾞ', 'ヅ': 'ﾂﾞ', 'デ': 'ﾃﾞ', 'ド': 'ﾄﾞ',
+        'バ': 'ﾊﾞ', 'ビ': 'ﾋﾞ', 'ブ': 'ﾌﾞ', 'ベ': 'ﾍﾞ', 'ボ': 'ﾎﾞ',
+        'パ': 'ﾊﾟ', 'ピ': 'ﾋﾟ', 'プ': 'ﾌﾟ', 'ペ': 'ﾍﾟ', 'ポ': 'ﾎﾟ',
+        'ヴ': 'ｳﾞ', '゛': 'ﾞ', '゜': 'ﾟ', '。': '｡', '、': '､', '・': '･', '「': '｢', '」': '｣', 'ー': 'ｰ',
+    };
+
+    return input.split('').map(char => fullwidthToHalfwidthMap[char] || char).join('');
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { HeaderButton } from './header';
-import { ConsultLink } from './TabsContext';
+import { ConsultLink } from './utilities';
 
 export default function Bookmarks () {
     const [bookmarks, setBookmarks] = useState([]);

@@ -1,0 +1,25 @@
+import React, { useState } from 'react';
+
+// Accordion Component
+export const Accordion = ({ title, content }) => {
+    const [openIndex, setOpenIndex] = useState(null);
+
+    const handleClick = index => {
+        setOpenIndex(openIndex === index ? null : index);
+    };
+
+    return (
+        <div>
+            <div >
+                <div onClick={() => handleClick(index)}>
+                    {title}
+                </div>
+                {(openIndex === index) && (
+                    <div>
+                        {content}
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};

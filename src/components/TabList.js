@@ -21,7 +21,7 @@ export default function TabList() {
           >
             <label>
               <button onClick={() => {setActiveTab(index)}}
-              className="h-full pl-3 py-3"
+              className="h-full pl-3 py-3 max-sm:py-2"
               >
                 {tab.title}
               </button>
@@ -44,7 +44,8 @@ export default function TabList() {
       </ul>
 
       
-      <div className="shadow-xl border bg-white p-6 grow min-h-0 overflow-auto rounded-lg rounded-tl-none">
+      <div className="shadow-xl border bg-white w-full min-h-0 overflow-x-hidden overflow-y-auto rounded-lg rounded-tl-none h-full
+      lg:p-6" >
       {tabs.map((tab, index) => ( 
           index === activeTab ? <>
             {tab.text}

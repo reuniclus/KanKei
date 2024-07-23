@@ -1,7 +1,7 @@
 import { createContext, useContext, useReducer } from 'react';
 import SearchResults from './searchresults';
 import DictEntry from './dictentry';
-import {pushLocalStorage} from'./utilities.jsx'
+import {pushLocalStorage, Searchlink} from'./utilities.jsx'
 
 const TabsContext = createContext(null);
 const TabsDispatchContext = createContext(null);
@@ -87,39 +87,7 @@ const DefaultTab= () => <>
 </ul>
 </>
 
-export const Searchlink = ({ text }) => {
-  const dispatch = useTabsDispatch().dispatch;
-  return (<>
-    <button
-      onClick={() => {
-        dispatch({
-          type: 'search',
-          title: text,
-          text: text,
-        });
-      }}
-      className="text-cyan-500 underline hover:text-blue-500 cursor-pointer">
-      {text}
-    </button>
-  </>)
-}
 
-export const ConsultLink = ({ text }) => {
-  const dispatch = useTabsDispatch().dispatch;
-  return (<>
-    <button
-      onClick={() => {
-        dispatch({
-          type: 'consult',
-          title: text,
-          text: text,
-        });
-      }}
-      className="text-cyan-500 underline hover:text-blue-500 cursor-pointer">
-      {text}
-    </button>
-  </>)
-}
 
 
 const activeTabData = {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { HeaderButton } from './header';
-import { ConsultLink, Searchlink } from './TabsContext';
+import { ConsultLink, Searchlink } from './utilities';
 
 const History = () => {
     const [searchHistory, setSearchHistory] = useState([]);

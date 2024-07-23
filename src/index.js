@@ -13,7 +13,8 @@ root.render(
       <div className="flex flex-col h-dvh ">
         <Header/>
 
-        <div className="flex flex-col p-8 max-w-7xl self-center h-full min-h-0 ">
+        <div className="flex flex-col self-center min-h-0 h-full 
+        w-full md:p-8 max-w-[95rem]">
           <TabList />
         </div>
 

@@ -5,20 +5,20 @@ import Bookmarks from "./bookmarks";
 
 
 export const HeaderButton = ({ onClick, title, img }) =>
-    <button onClick={onClick} class="flex flex-col self-stretch my-auto whitespace-nowrap text-neutral-400 hover:bg-slate-100 p-1 rounded-md">
+    <button onClick={onClick} class="flex flex-col self-stretch my-auto whitespace-nowrap text-neutral-400 hover:bg-slate-100 p-1 rounded-md max-md:hidden">
         <img
             loading="lazy"
             src={img}
             className="self-center aspect-[1.41] w-[34px]"
         />
-        <div>{title}</div>
+        <div className="max-xl:text-sm max-lg:hidden">{title}</div>
     </button>;
 
 export default function Header() {
 
     return (
-        <div class="flex flex-col justify-center py-3 px-6 shadow-xl">
-            <div class="flex justify-end  gap-5 text-sm text-cyan-500">
+        <div class="flex flex-col justify-center py-3 px-6 shadow-xl max-sm:p-2 gap-1">
+            <div class="flex justify-end gap-5 text-sm text-cyan-500">
                 <div class="underline">About</div>
                 <div class="underline">Contribute</div>
                 <div class="underline">Disclaimer</div>
