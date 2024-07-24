@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react"
-import { useTabs, useTabsDispatch } from './TabsContext.js';
+import { useTabsDispatch } from './TabsContext.js';
 import { getComponents, Searchlink, setColorClass } from './utilities'
-import { bookmarkLocalStorage, removeLocalStorage, ConsultLink, shorten, toHalfWidth } from './utilities.jsx'
-//import { Accordion } from "./ui";
+import { bookmarkLocalStorage, removeLocalStorage, ConsultLink, shorten, determineVisibility } from './utilities.jsx'
 
 const apiurl = 'https://sheet.best/api/sheets/1000dcf2-2fe7-428c-9be3-2a50656c18c0/tabs/cjkvi-ids-analysis';
 const wiktionaryapi = 'https://en.wiktionary.org/w/api.php?origin=*&action=parse&formatversion=2&prop=text&format=json&page='
@@ -18,16 +17,13 @@ const Caption = ({ title, data }) => {
 function DictEntry(kanji) {
 
     const [kanjiData, setKanjiData] = useState()
-
     const [components, setComponents] = useState([]);
 
     useEffect(() => {
         fetch(`${apiurl}/kanji/${kanji.kanji}`)
             .then(response => response.json())
             .then(data => {
-                console.log('kanji ' + kanji.kanji);
-                console.log(data);
-                setKanjiData(data[0] == undefined ? kanjiData : data[0]);
+                setKanjiData(data[0] === undefined ? kanjiData : data[0]);
                 setComponents(getComponents(data[0]));
             })
             .catch(error => {
@@ -38,12 +34,14 @@ function DictEntry(kanji) {
     return (
         <>
             <div className="flex flex-col xl:flex-row w-full h-full overflow-y-auto">
-                {kanjiData ? <>
+                {!!kanjiData && <>
                     <KanjiInfo kanjiData={kanjiData} />
-                    <div className="w-full overflow-y-visible xl:overflow-y-hidden">
-                        <div className="overflow-x-auto">
-                            <div className="w-fit min-w-full flex justify-around gap-4">
 
+                    <div className="w-full h-full overflow-y-visible xl:overflow-y-hidden flex min-w-0">
+                        <div className="overflow-x-auto h-full flex w-full">
+                            <div className="px-5 
+                            h-full w-full justify-evenly
+                            flex gap-4">
                                 {components.map((obj, index) => (
                                     <ComponentInfo character={obj.compchar} role={obj.comprole} key={index} />
                                 ))}
@@ -54,7 +52,7 @@ function DictEntry(kanji) {
                             </div>
                         </div>
                     </div>
-                </> : <></>}
+                </>}
             </div>
         </>
     )
@@ -97,7 +95,7 @@ const KanjiInfo = ({ kanjiData }) => {
 
 
     return (
-        <div className="flex flex-col lg:max-xl:flex-row p-5 xl:max-w-[30rem] relative">
+        <div className="flex flex-col lg:max-xl:flex-row p-5 pb-0 xl:max-w-[30rem] relative">
             <BookmarkButton kanji={kanjiData.kanji} />
             <div className="flex gap-5 max-sm:flex-col max-md:gap-0">
                 <div className="flex flex-col gap-3 items-center xl:max-w-32">
@@ -105,7 +103,7 @@ const KanjiInfo = ({ kanjiData }) => {
                         {kanjiData.kanji}
                     </div>
                     <div className="">
-                        {kanjiData.idc_analysis == "" ? kanjiData.idc_naive : kanjiData.idc_analysis}
+                        {kanjiData.idc_analysis === "" ? kanjiData.idc_naive : kanjiData.idc_analysis}
                     </div>
                     <Caption title="meaning" data={kanjiData.meaning} />
                 </div>
@@ -117,31 +115,35 @@ const KanjiInfo = ({ kanjiData }) => {
                     <Caption title="tags" data=
                         {tags.map((e, index) => (
                             <>
-                            <Searchlink text={'#' + e}/>&nbsp;</>
+                                <Searchlink text={'#' + e} />&nbsp;</>
                         ))}
                     />
                     <Caption title="inclusion" data={<>{kanjiData.inclusion_jomako} (pop culture)<br /> {kanjiData.inclusion_all} (all texts)</>} />
                     <Caption title="variants" data=
                         {variants.map((e, index) => (
                             <>
-                            <ConsultLink text={e}/>&nbsp;</>
+                                <ConsultLink text={e} />&nbsp;</>
                         ))}
                     />
                     <div className="flex max-xl:gap-3 xl:flex-col">
                         <div className="text-neutral-400 select-none max-xl:basis-16 shrink-0 xl:self-center">External links</div>
-                        <div className="flex flex-wrap gap-x-3 xl:justify-around grow">
-                            <div><a className="text-cyan-500 underline hover:text-blue-500" target="_blank" href={`https://zi.tools/zi/${kanjiData.kanji}`}>full data</a></div>
-                            <div><a className="text-cyan-500 underline hover:text-blue-500" target="_blank" href={`https://jisho.org/search/*${kanjiData.kanji}*`}>word search</a></div>
-                            <div><a className="text-cyan-500 underline hover:text-blue-500" target="_blank" href={`https://www.wanikani.com/kanji/${kanjiData.kanji}`}>mnemonics</a></div>
-                            <div><a className="text-cyan-500 underline hover:text-blue-500" target="_blank" href={`https://humanum.arts.cuhk.edu.hk/Lexis/lexi-mf/search.php?word=${kanjiData.kanji}`}>etymology</a></div>
-                            <div><a className="text-cyan-500 underline hover:text-blue-500" target="_blank" href={`https://en.wiktionary.org/wiki/${kanjiData.kanji}#Chinese`}>wiktionary</a></div>
+                        <div className="columns-2">
+                            <div><a className="text-cyan-500 underline hover:text-blue-500" target="_blank" rel="noreferrer" href={`https://zi.tools/zi/${kanjiData.kanji}`}>full data</a></div>
+                            <div><a className="text-cyan-500 underline hover:text-blue-500" target="_blank" rel="noreferrer" href={`https://jisho.org/search/*${kanjiData.kanji}*`}>word search</a></div>
+                            <div><a className="text-cyan-500 underline hover:text-blue-500" target="_blank" rel="noreferrer" href={`https://www.wanikani.com/kanji/${kanjiData.kanji}`}>mnemonics</a></div>
+                            <div><a className="text-cyan-500 underline hover:text-blue-500" target="_blank" rel="noreferrer" href={`https://humanum.arts.cuhk.edu.hk/Lexis/lexi-mf/search.php?word=${kanjiData.kanji}`}>etymology</a></div>
+                            <div><a className="text-cyan-500 underline hover:text-blue-500" target="_blank" rel="noreferrer" href={`https://en.wiktionary.org/wiki/${kanjiData.kanji}#Chinese`}>wiktionary</a></div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div className="grow">
-                <h2 className="mt-2.5 font-bold text-bold">Etymology</h2>
+            <div className="w-full grow overflow-auto">
+                <h2 className="font-bold text-bold">Etymology</h2>
                 <div className="max-w-2xl mr-9">{wiktionaryextract}</div>
+                {/*<h2 className="font-bold text-bold mt-2">Notes</h2>
+                <div className="max-w-2xl">
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                </div>*/}
             </div>
         </div>
     )
@@ -166,7 +168,7 @@ const ComponentInfo = ({ character, role }) => {
 
     return (
         <>
-            <div className="flex flex-col w-1/3 grow-0">
+            <div className="flex flex-col basis-0 grow max-sm:max-w-52 sm:min-w-0 justify-start">
                 <div className={`text-2xl max-md:text-xl select-none ${setColorClass(role)}`}>{role}</div>
                 <div
                     onClick={() => {
@@ -179,7 +181,7 @@ const ComponentInfo = ({ character, role }) => {
                     className={`cursor-pointer mt-2.5 text-8xl font-bold font-serif ${setColorClass(role)} max-md:text-6xl`}>
                     {character}
                 </div>
-                {!compData ? <></> : <>
+                {!!compData && <>
                     <div>{shorten(compData.meaning)}</div>
                     <div> ({compData.on} {compData.pinyin})</div>
                 </>}
@@ -199,13 +201,14 @@ const ComponentSeries = ({ character, role }) => {
         case 'Root phonetic': query = 'root_phonetic_search'; break;
         case 'Empty': query = ''; break;
         case 'Form': query = ''; break;
+        default: query = '';
     }
     const [series, setSeries] = useState([])
 
     const [open, setOpen] = useState(true)
 
     useEffect(() => {
-        fetch(`${apiurl}/query?freq_jp=__lte(2600)&${query}=${character}`)
+        fetch(`${apiurl}/query?&${query}=${character}`)
             .then(response => response.json())
             .then(data => {
                 console.log(data);
@@ -230,9 +233,11 @@ const ComponentSeries = ({ character, role }) => {
                     </svg>
                 </button>
             </div>
-            <div className={`flex flex-col gap-1 w-full transition-all duration-300 ${open ? 'overflow-y-auto max-h-full xl:max-h-[calc(100vh-35rem)]' : 'overflow-hidden max-h-0'}`}>
-                {!series.length ? <>None</> : <>
-                    {series.map((obj, index) => (
+            <div className={`flex flex-col gap-1 w-full transition-all duration-300 
+                ${open ? 'overflow-y-auto max-h-full min-h-8' : 'overflow-hidden max-h-0 min-h-0'}`}>
+                {series.every((obj) => !determineVisibility(obj)) ?
+                    <button className="flex gap-1.5 items-center justify-start text-left tracking-tight hover:bg-gray-100 py-0.5 pl-1 rounded-md">None</button> :
+                    <>{series.map((obj, index) => (
                         <KanjiListItem charobj={obj} key={index} />
                     ))}</>}
             </div>
@@ -241,8 +246,22 @@ const ComponentSeries = ({ character, role }) => {
 }
 
 const KanjiListItem = ({ charobj }) => {
+    const [isVisible, setIsVisible] = useState(determineVisibility(charobj));
+
+    useEffect(() => {
+        const handleStorage = (event) => {
+            setIsVisible(determineVisibility(charobj));
+        }
+
+        window.addEventListener('storage', handleStorage)
+
+        return () => {
+            window.removeEventListener('storage', handleStorage)
+        }
+    }, [])
+
     const dispatch = useTabsDispatch().dispatch;
-    return (<>
+    return (<> {isVisible &&
         <button onClick={() => {
             dispatch({
                 type: 'consult',
@@ -260,7 +279,7 @@ const KanjiListItem = ({ charobj }) => {
                 {shorten(charobj.meaning, true)}
             </span>
         </button>
-    </>)
+    }</>)
 }
 
 

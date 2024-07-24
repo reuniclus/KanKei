@@ -1,7 +1,7 @@
 import { createContext, useContext, useReducer } from 'react';
-import SearchResults from './searchresults';
+import SearchResults, { SearchContainer } from './searchresults';
 import DictEntry from './dictentry';
-import { pushLocalStorage, Searchlink } from'./utilities.jsx'
+import { pushLocalStorage, pushSearchTabSessionStorage, Searchlink } from'./utilities.jsx'
 
 const TabsContext = createContext(null);
 const TabsDispatchContext = createContext(null);
@@ -38,19 +38,23 @@ function tabsReducer(tabs, action) {
   switch (action.type) {
     case 'search': {
       pushLocalStorage('searchHistory',action.title)
-      return [...tabs, {
+      tabs = [...tabs, {
         id: activeTabData.idcounter++,
         title: `Search - ${action.title}`,
-        text: <SearchResults searchresults={action.text} />,
+        text: <SearchContainer query={action.text}/>        
       }];
+
+      //pushSearchTabSessionStorage({id:activeTabData.idcounter, title: `Search - ${action.title}`, processedArray:[]})
+      break;
     }
     case 'consult': {
       pushLocalStorage('consultHistory',action.title)
-      return [...tabs, {
+      tabs = [...tabs, {
         id: activeTabData.idcounter++,
         title: action.title,
         text: <DictEntry kanji={action.text} />,
       }];
+      break;
     }
     case 'deleted': {
       tabs = tabs.filter(t => t.id !== action.id)
@@ -59,12 +63,13 @@ function tabsReducer(tabs, action) {
         title: '🙂',
         text: <DefaultTab/>,
       }];
-      return tabs;
+      break;
     }
     default: {
       throw Error('Unknown action: ' + action.type);
     }
   }
+  return tabs
 }
 
 const initialTabs = [
