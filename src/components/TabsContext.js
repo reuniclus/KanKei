@@ -1,6 +1,6 @@
 import { createContext, useContext, useReducer } from 'react';
-import SearchResults, { SearchContainer } from './searchresults';
-import DictEntry from './dictentry';
+import { SearchContainer } from './searchresults';
+import { DictEntryContainer } from './dictentry';
 import { pushLocalStorage, pushSearchTabSessionStorage, Searchlink } from'./utilities.jsx'
 
 const TabsContext = createContext(null);
@@ -52,7 +52,7 @@ function tabsReducer(tabs, action) {
       tabs = [...tabs, {
         id: activeTabData.idcounter++,
         title: action.title,
-        text: <DictEntry kanji={action.text} />,
+        text: <DictEntryContainer kanji={action.text} />,
       }];
       break;
     }

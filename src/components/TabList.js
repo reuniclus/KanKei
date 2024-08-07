@@ -45,7 +45,7 @@ export default function TabList() {
       <div className="shadow-xl border w-full min-h-0 overflow-hidden rounded-lg rounded-tl-none bg-white h-full flex justify-stretch
       lg:p-6 lg:pb-0" >
         {tabs.map((tab, index) => (
-          <div className={`w-full flex flex-col overflow-y-auto ${index === activeTab ? '' : 'hidden'}`}>
+          <div className={`w-full flex flex-col overflow-y-auto ${index === activeTab ? '' : 'hidden'}`} key={index}>
             {tab.text}
           </div>
         ))}
