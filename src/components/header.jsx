@@ -206,22 +206,22 @@ const Settings = () => {
                 </li>
             </ul>
             Data Display
-            <Toggle text={'Show tags'} onChange={(event) => handleOnChange(event, 'show_tags')} checked={savedSettings['show_tags']} />
+            <Toggle text={'Show tags'} onChange={(event) => handleOnChange(event, 'show_tags')} checked={savedSettings?.show_tags || false} />
 
-            <Toggle text={'Show variants'} onChange={(event) => handleOnChange(event, 'show_variants')} checked={savedSettings['show_variants']} />
+            <Toggle text={'Show variants'} onChange={(event) => handleOnChange(event, 'show_variants')} checked={savedSettings?.show_variants|| false} />
 
             Language Settings
-            <Toggle text={'Enable Mandarin'} onChange={(event) => handleOnChange(event, 'show_pinyin')} checked={savedSettings['show_pinyin']} />
+            <Toggle text={'Enable Mandarin'} onChange={(event) => handleOnChange(event, 'show_pinyin')} checked={savedSettings?.show_pinyin|| false} />
 
-            <Toggle text={'Enable Cantonese'} onChange={(event) => handleOnChange(event, 'show_jyutping')} checked={savedSettings['show_jyutping']} />
+            <Toggle text={'Enable Cantonese'} onChange={(event) => handleOnChange(event, 'show_jyutping')} checked={savedSettings?.show_jyutping|| false} />
 
 
             Filtering settings
-            <Toggle text={'Include Jinmeiyou kanji'} onChange={(event) => handleOnChange(event, 'include_jmy')} checked={savedSettings['include_jmy']} />
+            <Toggle text={'Include Jinmeiyou kanji'} onChange={(event) => handleOnChange(event, 'include_jmy')} checked={savedSettings?.include_jmy|| false} />
 
-            <Toggle text={'Include Chinese hanzi'} onChange={(event) => handleOnChange(event, 'include_sc')} checked={savedSettings['include_sc']} />
+            <Toggle text={'Include Chinese hanzi'} onChange={(event) => handleOnChange(event, 'include_sc')} checked={savedSettings?.include_sc|| false} />
 
-            <Toggle text={'Include obscure characters'} onChange={(event) => handleOnChange(event, 'include_rare')} checked={savedSettings['include_rare']} />
+            <Toggle text={'Include obscure characters'} onChange={(event) => handleOnChange(event, 'include_rare')} checked={savedSettings?.include_rare|| false} />
 
         </Dropdown>
     </>
