@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getComponents, setColorClass, processSearchResultArray, ConsultLink, determineVisibility, TimeCounter, Searchlink } from './utilities';
+import { getComponents, setColorClass, processSearchResultArray, ConsultLink, determineVisibility, TimeCounter, Searchlink, defaultsettings } from './utilities';
 import { fetchSearchResults } from "./utilities_fetch.js";
 import { shorten } from "./utilities_strings"
 
@@ -82,8 +82,18 @@ const Variants = ({ charaobj }) => {
 
 
 const SearchResult = ({ charaobj, exact }) => {
-
+    
     const [isVisible, setIsVisible] = useState(determineVisibility(charaobj));
+
+    const [savedSettings, setSavedSettings] = useState(JSON.parse(localStorage.getItem('settings')) || defaultsettings);
+
+    useEffect(() => {
+        const handleStorage = (event) => {
+            setSavedSettings(JSON.parse(localStorage.getItem('settings')));
+        }
+        window.addEventListener('storage', handleStorage)
+        return () => { window.removeEventListener('storage', handleStorage) }
+    }, []);
 
     useEffect(() => {
         const handleStorage = (event) => {
@@ -105,7 +115,7 @@ const SearchResult = ({ charaobj, exact }) => {
                 <ConsultLink className="rounded-lg flex hover:bg-slate-200 p-2 gap-2.5 items-center min-w-0 grow" text={charaobj.kanji}>
                     <div className="font-medium font-serif table-cell align-middle text-4xl sm:text-[2.5rem]">{charaobj.kanji}</div>
                     <div className="flex flex-col text-sm grow min-w-0 text-left">
-                        <div className="w-full min-w-0 overflow-hidden text-ellipsis text-nowrap">{shorten(charaobj.kun, true)} {shorten(charaobj.on)} {charaobj.pinyin}</div>
+                        <div className="w-full min-w-0 overflow-hidden text-ellipsis text-nowrap">{shorten(charaobj.kun, true)} {shorten(charaobj.on)} {savedSettings.show_pinyin && charaobj.pinyin} {savedSettings.show_jyutping && charaobj.jyutping}</div>
                         <div className="w-full min-w-0 overflow-hidden text-ellipsis text-nowrap">{shorten(charaobj.meaning)}</div>
                     </div>
                 </ConsultLink>
