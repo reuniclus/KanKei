@@ -7,10 +7,11 @@ export default function TabList() {
   const dispatch = useTabsDispatch().dispatch;
   const [activeTab, setActiveTab] = useState(useTabs().activeTab.activeTab);
 
+  const { idcounter } = useTabs().activeTab;
 
   useEffect(() => {
     setActiveTab(tabs.length - 1)
-  }, [useTabs().activeTab.idcounter])
+  }, [tabs.length, idcounter])
 
   return (
     <>

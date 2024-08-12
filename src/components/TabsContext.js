@@ -1,7 +1,7 @@
 import { createContext, useContext, useReducer } from 'react';
 import { SearchContainer } from './searchresults';
 import { DictEntryContainer } from './dictentry';
-import { pushLocalStorage, pushSearchTabSessionStorage, Searchlink } from'./utilities.jsx'
+import { pushLocalStorage, Searchlink } from'./utilities.jsx'
 
 const TabsContext = createContext(null);
 const TabsDispatchContext = createContext(null);

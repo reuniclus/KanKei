@@ -6,10 +6,10 @@ import { ConsultLink, defaultsettings, Searchlink } from './utilities';
 export default function Header() {
     return (
         <div className="flex flex-col shadow-xl p-2 gap-1 bg-white">
-            <div className="flex justify-end gap-5 text-sm text-cyan-500 underline max-sm:hidden">
-                <a>About</a>
+            <div className="flex justify-end gap-5 text-sm text-cyan-500 underline max-sm:hidden hidden">
+                {/*<a>About</a>
                 <a>Contribute</a>
-                <a>Disclaimer</a>
+                <a>Disclaimer</a>*/}
             </div>
 
             <div className="flex gap-3 justify-center items-center">

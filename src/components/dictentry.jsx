@@ -77,7 +77,7 @@ function processWiktionaryHTML(wiktionaryJSON) {
     catch {
         etymsection = ''
     }
-
+    // eslint-disable-next-line
     if (etymsection.includes("<p")) etymsection = etymsection.replace(new RegExp(".*?(<p>.+?<\/p>).*?", 'gs'), '$1');
     else etymsection = ''
 
