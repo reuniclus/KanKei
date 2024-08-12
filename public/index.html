@@ -49,52 +49,51 @@
     }
   </style>
   <script>/*
-const apiurl = "https://script.google.com/macros/s/AKfycbxIQauH_DedAdWPZP3Xmwh9iKXJNseZuptmxoGykHAmutxjCdqE6JU279Mfm_temNMFvg/exec"
-document.addEventListener('DOMContentLoaded', () => {
-const fetchData = async () => {
-  try {
-    const response = await fetch(`${apiurl}?action=getData`);
-    const result = await response.json();
-    localStorage.setItem('data', JSON.stringify(result));
-    console.log('data updated')
-  } catch (error) {
-    console.error('Error fetching data:', error);
-  }
-};
+    const apiurl = "https://script.google.com/macros/s/AKfycbxIQauH_DedAdWPZP3Xmwh9iKXJNseZuptmxoGykHAmutxjCdqE6JU279Mfm_temNMFvg/exec"
+    document.addEventListener('DOMContentLoaded', () => {
+      const fetchData = async () => {
+        try {
+          const response = await fetch(`${apiurl}?action=getData`);
+          const result = await response.json();
+          localStorage.setItem('data', JSON.stringify(result));
+          console.log('data updated')
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      };
 
-const fetchLastModifiedTime = async () => {
-  try {
-    const response = await fetch(`${apiurl}?action=getLastModified`);
-    const fetchedLastTime = await response.json();
-    const storedLastTime = localStorage.getItem('lastModifiedTime')
-    localStorage.setItem('lastModifiedTime', fetchedLastTime);
-    const doTimesMatch = fetchedLastTime === storedLastTime
-    if (!doTimesMatch) {
-      console.log(`Database updated on ${fetchedLastTime}, updating stored data...`)
-      fetchData();
-    }
-  } catch (error) {
-    console.error('Error fetching last modified time:', error);
-  }
-};
+      const fetchLastModifiedTime = async () => {
+        try {
+          const response = await fetch(`${apiurl}?action=getLastModified`);
+          const fetchedLastTime = await response.json();
+          const storedLastTime = localStorage.getItem('lastModifiedTime')
+          localStorage.setItem('lastModifiedTime', fetchedLastTime);
+          const doTimesMatch = fetchedLastTime === storedLastTime
+          if (!doTimesMatch) {
+            console.log(`Database updated on ${fetchedLastTime}, updating stored data...`)
+            fetchData();
+          }
+        } catch (error) {
+          console.error('Error fetching last modified time:', error);
+        }
+      };
 
-if (!localStorage.getItem('data')) {
-  fetchData();
-  fetchLastModifiedTime();
-}
-else {
-  console.log(`Using data fetched on ${localStorage.getItem('lastModifiedTime')}`)
-  fetchLastModifiedTime();
-}
-});*/
+      if (!localStorage.getItem('data')) {
+        fetchData();
+        fetchLastModifiedTime();
+      }
+      else {
+        console.log(`Using data fetched on ${localStorage.getItem('lastModifiedTime')}`)
+        fetchLastModifiedTime();
+      }
+    });*/
   </script>
 
 </head>
 
 <body>
   <noscript>You need to enable JavaScript to run this app.</noscript>
-  <div id="root"
-    class="bg-slate-50">
+  <div id="root" class="bg-slate-50">
   </div>
   <!--
       This HTML file is a template.
