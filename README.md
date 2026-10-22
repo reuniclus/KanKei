@@ -1,7 +1,7 @@
 # KanKei: Kanji Lookup Tool
 
 ## Overview
-**KanKei** (漢係) web-based application designed to assist Japanese learners in understanding the etymological relationships between kanji by breaking them down into components. The purpose of component-based kanji learning is to help learners create mental connections between kanji to make them intuitive to learn without rote memorization. Similar websites already exist, such as [HanziCraft](https://hanzicraft.com/) and [zi.tools](https://zi.tools/)), however those are more targetted towards Chinese learning. This site is more focused towards Japanese Kanji, although it still displays data for Mandarin or Cantonese.
+[**KanKei**](https://reuniclus.github.io/KanKei/) (漢係) web-based application designed to assist Japanese learners in understanding the etymological relationships between kanji by breaking them down into components. The purpose of component-based kanji learning is to help learners create mental connections between kanji to make them intuitive to learn without rote memorization. Similar websites already exist, such as [HanziCraft](https://hanzicraft.com/) and [zi.tools](https://zi.tools/)), however those are more targetted towards Chinese learning. This site is more focused towards Japanese Kanji, although it still displays data for Mandarin or Cantonese.
 
 To search for a Kanji, you can enter any combination of kanji, components, pronunciations, or meanings. 
 
